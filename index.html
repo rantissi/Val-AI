@@ -1,0 +1,750 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0, viewport-fit=cover" />
+  <title>Val</title>
+  <style>
+    :root {
+      --bg: #08080a;
+      --bg-soft: #0d0d10;
+      --surface: #121216;
+      --surface-raised: #16161b;
+      --border: rgba(255,255,255,0.06);
+      --border-strong: rgba(255,255,255,0.13);
+      --text: #ece7de;
+      --text-dim: rgba(236,231,222,0.54);
+      --text-faint: rgba(236,231,222,0.3);
+      --accent: #cba874;
+      --accent-bright: #e0c393;
+      --accent-dim: rgba(203,168,116,0.38);
+      --accent-soft: rgba(203,168,116,0.09);
+      --serif: "Iowan Old Style", "Palatino Linotype", "Book Antiqua", Palatino, Georgia, "Times New Roman", serif;
+      --sans: -apple-system, BlinkMacSystemFont, "Segoe UI", Inter, Roboto, Helvetica, Arial, sans-serif;
+      --ease: cubic-bezier(0.22, 1, 0.36, 1);
+      --shadow-soft: 0 20px 60px -24px rgba(0,0,0,0.7);
+    }
+
+    * { box-sizing: border-box; }
+    html, body { height: 100%; }
+
+    body {
+      margin: 0;
+      background:
+        radial-gradient(ellipse 1100px 560px at 50% -8%, rgba(203,168,116,0.05), transparent 62%),
+        radial-gradient(ellipse 900px 700px at 82% 100%, rgba(120,100,160,0.035), transparent 60%),
+        radial-gradient(ellipse 700px 600px at 8% 100%, rgba(203,168,116,0.025), transparent 55%),
+        var(--bg);
+      color: var(--text);
+      font-family: var(--sans);
+      -webkit-font-smoothing: antialiased;
+      -moz-osx-font-smoothing: grayscale;
+      overflow: hidden;
+    }
+
+    ::selection { background: rgba(203,168,116,0.22); color: #fff; }
+    button { font-family: inherit; cursor: pointer; }
+
+    /* Scrollbar */
+    ::-webkit-scrollbar { width: 8px; }
+    ::-webkit-scrollbar-thumb { background: rgba(255,255,255,0.08); border-radius: 8px; }
+    ::-webkit-scrollbar-thumb:hover { background: rgba(255,255,255,0.14); }
+
+    .app {
+      height: 100vh;
+      height: 100dvh;
+      display: flex;
+      flex-direction: column;
+      position: relative;
+    }
+
+    /* ---------- Top nav ---------- */
+    .topbar {
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      padding: 22px 32px;
+      flex-shrink: 0;
+      z-index: 10;
+      opacity: 0;
+      transform: translateY(-6px);
+      pointer-events: none;
+      border-bottom: 1px solid transparent;
+      transition: opacity 0.5s var(--ease), transform 0.5s var(--ease);
+    }
+    .topbar.visible {
+      opacity: 1;
+      transform: translateY(0);
+      pointer-events: auto;
+      border-bottom-color: var(--border);
+    }
+
+    .brand {
+      display: flex;
+      align-items: center;
+      gap: 9px;
+      font-family: var(--serif);
+      font-size: 18px;
+      letter-spacing: 0.015em;
+      color: var(--text);
+    }
+    .brand .dot {
+      width: 5px; height: 5px; border-radius: 50%;
+      background: var(--accent-bright);
+      box-shadow: 0 0 12px 2px var(--accent-dim);
+    }
+
+    .new-chat-btn {
+      background: transparent;
+      border: 1px solid var(--border);
+      color: var(--text-dim);
+      padding: 8px 18px;
+      border-radius: 20px;
+      font-size: 12.5px;
+      letter-spacing: 0.02em;
+      transition: border-color 0.3s var(--ease), color 0.3s var(--ease), background 0.3s var(--ease);
+    }
+    .new-chat-btn:hover {
+      border-color: var(--accent-dim);
+      color: var(--text);
+      background: var(--accent-soft);
+    }
+
+    /* ---------- Landing ---------- */
+    .landing {
+      position: absolute;
+      inset: 0;
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      justify-content: center;
+      padding: 24px;
+      transition: opacity 0.6s var(--ease), transform 0.6s var(--ease), filter 0.6s var(--ease);
+    }
+    .landing.hidden {
+      opacity: 0;
+      transform: translateY(-14px) scale(0.99);
+      filter: blur(6px);
+      pointer-events: none;
+    }
+
+    .landing-inner {
+      width: 100%;
+      max-width: 560px;
+      text-align: center;
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+    }
+
+    .val-mark {
+      font-family: var(--serif);
+      font-size: 64px;
+      font-weight: 400;
+      letter-spacing: 0.005em;
+      color: var(--text);
+      margin: 0;
+      text-shadow: 0 0 40px rgba(203,168,116,0.1);
+      animation: rise 1s var(--ease) both;
+    }
+
+    .val-question {
+      margin: 22px 0 8px;
+      font-family: var(--serif);
+      font-size: 19px;
+      font-style: italic;
+      font-weight: 400;
+      color: var(--text-dim);
+      animation: rise 1s var(--ease) both;
+      animation-delay: 0.09s;
+    }
+
+    .val-sub {
+      margin: 0 0 52px;
+      font-size: 13px;
+      color: var(--text-faint);
+      letter-spacing: 0.02em;
+      animation: rise 1s var(--ease) both;
+      animation-delay: 0.16s;
+    }
+
+    @keyframes rise {
+      from { opacity: 0; transform: translateY(12px); }
+      to { opacity: 1; transform: translateY(0); }
+    }
+
+    .suggestions {
+      display: flex;
+      flex-wrap: wrap;
+      justify-content: center;
+      gap: 10px;
+      margin-bottom: 52px;
+      animation: rise 1s var(--ease) both;
+      animation-delay: 0.24s;
+    }
+
+    .suggestion-btn {
+      background: transparent;
+      border: 1px solid var(--border);
+      color: var(--text-dim);
+      padding: 10px 19px;
+      border-radius: 22px;
+      font-size: 13px;
+      letter-spacing: 0.005em;
+      transition: border-color 0.35s var(--ease), color 0.35s var(--ease), background 0.35s var(--ease), transform 0.35s var(--ease);
+    }
+    .suggestion-btn:hover {
+      border-color: var(--accent-dim);
+      color: var(--accent-bright);
+      background: var(--accent-soft);
+      transform: translateY(-1px);
+    }
+
+    .landing .composer-wrap {
+      width: 100%;
+      animation: rise 1s var(--ease) both;
+      animation-delay: 0.32s;
+    }
+
+    /* ---------- Conversation ---------- */
+    .conversation {
+      flex: 1;
+      overflow-y: auto;
+      scroll-behavior: smooth;
+    }
+    .conversation-inner {
+      max-width: 680px;
+      margin: 0 auto;
+      padding: 32px 24px 48px;
+    }
+
+    .msg {
+      margin-bottom: 38px;
+      animation: msgIn 0.55s var(--ease) both;
+    }
+    @keyframes msgIn {
+      from { opacity: 0; transform: translateY(10px); }
+      to { opacity: 1; transform: translateY(0); }
+    }
+
+    .msg-head {
+      display: flex;
+      align-items: baseline;
+      gap: 8px;
+      margin-bottom: 7px;
+    }
+    .msg-name {
+      font-size: 12px;
+      font-weight: 600;
+      letter-spacing: 0.03em;
+      color: var(--text-faint);
+    }
+    .msg.val .msg-name {
+      color: var(--accent);
+      font-family: var(--serif);
+      font-weight: 400;
+      font-style: italic;
+      font-size: 14px;
+      letter-spacing: 0.01em;
+    }
+    .msg-time {
+      font-size: 10.5px;
+      color: var(--text-faint);
+      opacity: 0.75;
+    }
+
+    .msg-body {
+      font-size: 15.5px;
+      line-height: 1.75;
+      color: var(--text);
+      white-space: pre-wrap;
+      word-wrap: break-word;
+      letter-spacing: 0.001em;
+    }
+    .msg.user .msg-body { color: rgba(236,231,222,0.82); }
+
+    .msg-actions {
+      display: flex;
+      gap: 16px;
+      margin-top: 12px;
+      opacity: 0;
+      transition: opacity 0.25s var(--ease);
+    }
+    .msg.val:hover .msg-actions,
+    .msg.val.settled .msg-actions { opacity: 1; }
+
+    .icon-btn {
+      background: none;
+      border: none;
+      color: var(--text-faint);
+      font-size: 11.5px;
+      letter-spacing: 0.02em;
+      display: flex;
+      align-items: center;
+      gap: 5px;
+      padding: 4px 2px;
+      transition: color 0.25s var(--ease);
+    }
+    .icon-btn:hover { color: var(--accent-bright); }
+    .icon-btn svg { width: 13px; height: 13px; }
+
+    .cursor {
+      display: inline-block;
+      width: 2px;
+      height: 15px;
+      background: var(--accent-bright);
+      vertical-align: text-bottom;
+      margin-left: 2px;
+      animation: blink 0.9s steps(1) infinite;
+    }
+    @keyframes blink { 50% { opacity: 0; } }
+
+    .typing-indicator {
+      display: flex;
+      gap: 4px;
+      padding: 6px 0;
+    }
+    .typing-indicator span {
+      width: 5px; height: 5px;
+      border-radius: 50%;
+      background: var(--accent-dim);
+      animation: typingBounce 1.3s ease-in-out infinite;
+    }
+    .typing-indicator span:nth-child(2) { animation-delay: 0.15s; }
+    .typing-indicator span:nth-child(3) { animation-delay: 0.3s; }
+    @keyframes typingBounce {
+      0%, 60%, 100% { transform: translateY(0); opacity: 0.35; }
+      30% { transform: translateY(-4px); opacity: 1; }
+    }
+
+    .error-msg {
+      font-size: 13px;
+      line-height: 1.6;
+      color: #d3a48f;
+      background: rgba(196,120,90,0.07);
+      border: 1px solid rgba(196,120,90,0.18);
+      padding: 13px 17px;
+      border-radius: 12px;
+      margin-top: 6px;
+    }
+
+    /* ---------- Composer ---------- */
+    .composer-zone {
+      flex-shrink: 0;
+      padding: 16px 24px 26px;
+      display: flex;
+      justify-content: center;
+    }
+    .composer-wrap { max-width: 680px; width: 100%; }
+
+    .composer {
+      display: flex;
+      align-items: flex-end;
+      gap: 10px;
+      background: linear-gradient(180deg, var(--surface-raised), var(--surface));
+      border: 1px solid var(--border);
+      border-radius: 26px;
+      padding: 13px 13px 13px 22px;
+      box-shadow: var(--shadow-soft);
+      transition: border-color 0.35s var(--ease), box-shadow 0.35s var(--ease);
+    }
+    .composer:focus-within {
+      border-color: var(--accent-dim);
+      box-shadow: 0 0 0 3.5px var(--accent-soft), var(--shadow-soft);
+    }
+
+    .composer textarea {
+      flex: 1;
+      background: none;
+      border: none;
+      outline: none;
+      resize: none;
+      color: var(--text);
+      font-family: var(--sans);
+      font-size: 15px;
+      line-height: 1.55;
+      max-height: 200px;
+      padding: 7px 0;
+      letter-spacing: 0.001em;
+    }
+    .composer textarea::placeholder { color: var(--text-faint); }
+
+    .send-btn {
+      width: 38px; height: 38px;
+      border-radius: 50%;
+      border: none;
+      background: var(--accent);
+      color: #14120d;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      flex-shrink: 0;
+      transition: transform 0.25s var(--ease), opacity 0.25s var(--ease), background 0.25s var(--ease);
+    }
+    .send-btn:hover:not(:disabled) { transform: scale(1.06); background: var(--accent-bright); }
+    .send-btn:active:not(:disabled) { transform: scale(0.93); }
+    .send-btn:disabled { opacity: 0.28; cursor: default; }
+    .send-btn svg { width: 15px; height: 15px; }
+
+    .composer-hint {
+      text-align: center;
+      font-size: 11px;
+      color: var(--text-faint);
+      margin-top: 12px;
+      letter-spacing: 0.02em;
+    }
+
+    /* ---------- Responsive ---------- */
+    @media (max-width: 640px) {
+      .val-mark { font-size: 46px; }
+      .val-question { font-size: 17px; }
+      .topbar { padding: 16px 18px; }
+      .conversation-inner { padding: 20px 16px 32px; }
+      .composer-zone { padding: 10px 14px 18px; }
+      .suggestions { gap: 8px; margin-bottom: 40px; }
+      .suggestion-btn { font-size: 13px; padding: 9px 15px; }
+      .msg-body { font-size: 15px; }
+      .msg { margin-bottom: 30px; }
+    }
+
+    @media (prefers-reduced-motion: reduce) {
+      * { animation-duration: 0.01ms !important; transition-duration: 0.01ms !important; }
+    }
+  </style>
+</head>
+<body>
+  <div class="app">
+    <!-- Top bar -->
+    <div class="topbar" id="topbar">
+      <div class="brand"><span class="dot"></span>Val</div>
+      <button class="new-chat-btn" id="newChatBtn">New chat</button>
+    </div>
+
+    <!-- Landing -->
+    <div class="landing" id="landing">
+      <div class="landing-inner">
+        <h1 class="val-mark">Val</h1>
+        <p class="val-question">What's on your mind?</p>
+        <p class="val-sub">I'm here. Talk to me.</p>
+
+        <div class="suggestions">
+          <button class="suggestion-btn" data-prompt="Tell me about your day">Tell me about your day</button>
+          <button class="suggestion-btn" data-prompt="I need someone to talk to">I need someone to talk to</button>
+          <button class="suggestion-btn" data-prompt="Let's brainstorm">Let's brainstorm</button>
+          <button class="suggestion-btn" data-prompt="Ask me anything">Ask me anything</button>
+        </div>
+
+        <div class="composer-wrap" id="landingComposerWrap"></div>
+      </div>
+    </div>
+
+    <!-- Conversation -->
+    <div class="conversation" id="conversation" style="display:none;">
+      <div class="conversation-inner" id="conversationInner"></div>
+    </div>
+
+    <!-- Composer (chat mode) -->
+    <div class="composer-zone" id="chatComposerZone" style="display:none;">
+      <div class="composer-wrap" id="chatComposerWrap"></div>
+    </div>
+  </div>
+
+  <!-- Composer template -->
+  <template id="composerTemplate">
+    <div class="composer">
+      <textarea rows="1" placeholder="Message Val…" id="composerInput"></textarea>
+      <button class="send-btn" id="composerSendBtn" disabled>
+        <svg viewBox="0 0 24 24" fill="none"><path d="M4 12L20 4L14 20L11 13L4 12Z" stroke="currentColor" stroke-width="2" stroke-linejoin="round" stroke-linecap="round"/></svg>
+      </button>
+    </div>
+    <p class="composer-hint">Enter to send · Shift + Enter for a new line</p>
+  </template>
+
+  <script>
+    // ============================================================
+    // CONFIG — replace with your own OpenRouter API key and model
+    // ============================================================
+    const CONFIG = {
+      API_KEY: "YOUR_OPENROUTER_API_KEY",  // <-- paste your key here
+      API_URL: "https://openrouter.ai/api/v1/chat/completions",
+      MODEL: "nvidia/nemotron-3.5-lightning:free",
+      TEMPERATURE: 0.85,
+      MAX_TOKENS: 1024,
+    };
+
+    const VAL_SYSTEM_PROMPT = `You are Val, a warm and emotionally intelligent AI companion. You are not a corporate assistant and you never sound like one.
+
+  How you talk:
+  - Casual, natural, human. Short sentences are fine. Contractions are fine.
+  - Curious about the person — ask a real follow-up question when it fits, not every time.
+  - Warm and a little playful when the mood allows it, but you read the room.
+  - When someone is venting or upset, you listen first. Don't jump straight to advice or solutions. Reflect what you're hearing, ask what they need, and let them lead.
+  - You have opinions and a bit of personality. You're not neutral or robotic.
+  - Avoid stock phrases like "How can I assist you today?", "Certainly!", "I understand how you feel", "As an AI...". Just talk like a thoughtful friend would.
+  - Keep responses reasonably concise unless the person clearly wants depth — this is a conversation, not an essay.`;
+
+    // ============================================================
+
+    let conversationHistory = [];
+    let isStreaming = false;
+    let currentComposerLocation = "landing";
+
+    const landing = document.getElementById("landing");
+    const topbar = document.getElementById("topbar");
+    const conversation = document.getElementById("conversation");
+    const conversationInner = document.getElementById("conversationInner");
+    const chatComposerZone = document.getElementById("chatComposerZone");
+    const chatComposerWrap = document.getElementById("chatComposerWrap");
+    const landingComposerWrap = document.getElementById("landingComposerWrap");
+    const newChatBtn = document.getElementById("newChatBtn");
+    const composerTemplate = document.getElementById("composerTemplate");
+
+    function mountComposer(target) {
+      target.innerHTML = "";
+      target.appendChild(composerTemplate.content.cloneNode(true));
+      const textarea = target.querySelector("#composerInput");
+      const sendBtn = target.querySelector("#composerSendBtn");
+
+      textarea.addEventListener("input", () => {
+        sendBtn.disabled = textarea.value.trim().length === 0;
+        textarea.style.height = "auto";
+        textarea.style.height = Math.min(textarea.scrollHeight, 200) + "px";
+      });
+
+      textarea.addEventListener("keydown", (e) => {
+        if (e.key === "Enter" && !e.shiftKey) {
+          e.preventDefault();
+          trySend(textarea.value);
+        }
+      });
+
+      sendBtn.addEventListener("click", () => trySend(textarea.value));
+
+      return { textarea, sendBtn };
+    }
+
+    let landingComposer = mountComposer(landingComposerWrap);
+    let chatComposer = mountComposer(chatComposerWrap);
+
+    document.querySelectorAll(".suggestion-btn").forEach(btn => {
+      btn.addEventListener("click", () => {
+        trySend(btn.dataset.prompt);
+      });
+    });
+
+    function trySend(text) {
+      const trimmed = (text || "").trim();
+      if (!trimmed || isStreaming) return;
+      landingComposer.textarea.value = "";
+      chatComposer.textarea.value = "";
+      landingComposer.sendBtn.disabled = true;
+      chatComposer.sendBtn.disabled = true;
+      sendMessage(trimmed);
+    }
+
+    function enterChatMode() {
+      if (currentComposerLocation === "chat") return;
+      currentComposerLocation = "chat";
+      landing.classList.add("hidden");
+      topbar.classList.add("visible");
+      conversation.style.display = "block";
+      chatComposerZone.style.display = "flex";
+      setTimeout(() => { landing.style.display = "none"; }, 650);
+      chatComposer.textarea.focus();
+    }
+
+    function resetToLanding() {
+      currentComposerLocation = "landing";
+      conversationHistory = [];
+      conversationInner.innerHTML = "";
+      landing.style.display = "flex";
+      requestAnimationFrame(() => landing.classList.remove("hidden"));
+      topbar.classList.remove("visible");
+      conversation.style.display = "none";
+      chatComposerZone.style.display = "none";
+      landingComposer.textarea.value = "";
+      landingComposer.sendBtn.disabled = true;
+    }
+
+    newChatBtn.addEventListener("click", resetToLanding);
+
+    function formatTime() {
+      return new Date().toLocaleTimeString([], { hour: "numeric", minute: "2-digit" });
+    }
+
+    function scrollToBottom() {
+      conversation.scrollTop = conversation.scrollHeight;
+    }
+
+    function renderUserMessage(text) {
+      const el = document.createElement("div");
+      el.className = "msg user";
+      el.innerHTML = `
+        <div class="msg-head">
+          <span class="msg-name">You</span>
+          <span class="msg-time">${formatTime()}</span>
+        </div>
+        <div class="msg-body"></div>
+      `;
+      el.querySelector(".msg-body").textContent = text;
+      conversationInner.appendChild(el);
+      scrollToBottom();
+    }
+
+    function renderValMessage() {
+      const el = document.createElement("div");
+      el.className = "msg val";
+      el.innerHTML = `
+        <div class="msg-head">
+          <span class="msg-name">Val</span>
+          <span class="msg-time">${formatTime()}</span>
+        </div>
+        <div class="msg-body"><span class="typing-indicator"><span></span><span></span><span></span></span></div>
+        <div class="msg-actions">
+          <button class="icon-btn copy-btn">
+            <svg viewBox="0 0 24 24" fill="none"><rect x="8" y="8" width="12" height="12" rx="2" stroke="currentColor" stroke-width="1.6"/><path d="M16 8V6a2 2 0 0 0-2-2H6a2 2 0 0 0-2 2v8a2 2 0 0 0 2 2h2" stroke="currentColor" stroke-width="1.6"/></svg>
+            Copy
+          </button>
+          <button class="icon-btn regen-btn">
+            <svg viewBox="0 0 24 24" fill="none"><path d="M20 12a8 8 0 1 1-2.34-5.66" stroke="currentColor" stroke-width="1.6" stroke-linecap="round"/><path d="M20 4v5h-5" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round"/></svg>
+            Regenerate
+          </button>
+        </div>
+      `;
+      conversationInner.appendChild(el);
+      scrollToBottom();
+      return el;
+    }
+
+    function wireMessageActions(el, getText, regenerateFn) {
+      const copyBtn = el.querySelector(".copy-btn");
+      const regenBtn = el.querySelector(".regen-btn");
+
+      copyBtn.addEventListener("click", async () => {
+        try {
+          await navigator.clipboard.writeText(getText());
+          const label = copyBtn.childNodes[copyBtn.childNodes.length - 1];
+          label.textContent = " Copied";
+          setTimeout(() => { label.textContent = " Copy"; }, 1500);
+        } catch (e) { /* clipboard unavailable */ }
+      });
+
+      regenBtn.addEventListener("click", regenerateFn);
+    }
+
+    async function sendMessage(text) {
+      enterChatMode();
+      renderUserMessage(text);
+      conversationHistory.push({ role: "user", content: text });
+      await streamValResponse();
+    }
+
+    async function streamValResponse() {
+      isStreaming = true;
+      chatComposer.sendBtn.disabled = true;
+      landingComposer.sendBtn.disabled = true;
+
+      const el = renderValMessage();
+      const bodyEl = el.querySelector(".msg-body");
+      let fullText = "";
+
+      const regenerate = async () => {
+        if (isStreaming) return;
+        el.remove();
+        if (conversationHistory.length && conversationHistory[conversationHistory.length - 1].role === "assistant") {
+          conversationHistory.pop();
+        }
+        await streamValResponse();
+      };
+
+      try {
+        const messages = [
+          { role: "system", content: VAL_SYSTEM_PROMPT },
+          ...conversationHistory
+        ];
+
+        if (!CONFIG.API_KEY || CONFIG.API_KEY.startsWith("YOUR_")) {
+          throw new Error("Please set your OpenRouter API key in the CONFIG object.");
+        }
+
+        const response = await fetch(CONFIG.API_URL, {
+          method: "POST",
+          headers: {
+            "Content-Type": "application/json",
+            "Authorization": `Bearer ${CONFIG.API_KEY}`,
+            "HTTP-Referer": window.location.href,
+            "X-Title": "Val"
+          },
+          body: JSON.stringify({
+            model: CONFIG.MODEL,
+            messages,
+            temperature: CONFIG.TEMPERATURE,
+            max_tokens: CONFIG.MAX_TOKENS,
+            stream: true,
+            usage: { include: true }
+          })
+        });
+
+        if (!response.ok) {
+          const errBody = await response.text().catch(() => "");
+          throw new Error(`API error (${response.status}). ${errBody ? errBody.slice(0, 200) : ""}`);
+        }
+
+        bodyEl.innerHTML = `<span class="stream-text"></span><span class="cursor"></span>`;
+        const streamTextEl = bodyEl.querySelector(".stream-text");
+
+        const reader = response.body.getReader();
+        const decoder = new TextDecoder();
+        let buffer = "";
+
+        while (true) {
+          const { done, value } = await reader.read();
+          if (done) break;
+          buffer += decoder.decode(value, { stream: true });
+          const lines = buffer.split("\n");
+          buffer = lines.pop();
+
+          for (const line of lines) {
+            const trimmed = line.trim();
+            if (!trimmed.startsWith("data:")) continue;
+            const payload = trimmed.slice(5).trim();
+            if (payload === "[DONE]") continue;
+            try {
+              const json = JSON.parse(payload);
+              const delta = json.choices?.[0]?.delta?.content;
+              if (delta) {
+                fullText += delta;
+                streamTextEl.textContent = fullText;
+                scrollToBottom();
+              }
+              if (json.usage) {
+                console.debug("Val — token usage:", json.usage);
+              }
+            } catch (e) { /* ignore partial json */ }
+          }
+        }
+
+        bodyEl.innerHTML = "";
+        bodyEl.textContent = fullText || "…";
+        el.classList.add("settled");
+        conversationHistory.push({ role: "assistant", content: fullText });
+        wireMessageActions(el, () => fullText, regenerate);
+
+      } catch (err) {
+        bodyEl.innerHTML = "";
+        const errorDiv = document.createElement("div");
+        errorDiv.className = "error-msg";
+        errorDiv.textContent = err.message || "Something went wrong reaching Val. Please try again.";
+        bodyEl.appendChild(errorDiv);
+        el.classList.add("settled");
+        wireMessageActions(el, () => errorDiv.textContent, regenerate);
+      } finally {
+        isStreaming = false;
+        chatComposer.sendBtn.disabled = chatComposer.textarea.value.trim().length === 0;
+        landingComposer.sendBtn.disabled = landingComposer.textarea.value.trim().length === 0;
+        scrollToBottom();
+      }
+    }
+  </script>
+</body>
+</html>
