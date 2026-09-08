@@ -1,750 +1,1869 @@
 <!DOCTYPE html>
 <html lang="en">
 <head>
-  <meta charset="UTF-8" />
-  <meta name="viewport" content="width=device-width, initial-scale=1.0, viewport-fit=cover" />
-  <title>Val</title>
-  <style>
-    :root {
-      --bg: #08080a;
-      --bg-soft: #0d0d10;
-      --surface: #121216;
-      --surface-raised: #16161b;
-      --border: rgba(255,255,255,0.06);
-      --border-strong: rgba(255,255,255,0.13);
-      --text: #ece7de;
-      --text-dim: rgba(236,231,222,0.54);
-      --text-faint: rgba(236,231,222,0.3);
-      --accent: #cba874;
-      --accent-bright: #e0c393;
-      --accent-dim: rgba(203,168,116,0.38);
-      --accent-soft: rgba(203,168,116,0.09);
-      --serif: "Iowan Old Style", "Palatino Linotype", "Book Antiqua", Palatino, Georgia, "Times New Roman", serif;
-      --sans: -apple-system, BlinkMacSystemFont, "Segoe UI", Inter, Roboto, Helvetica, Arial, sans-serif;
-      --ease: cubic-bezier(0.22, 1, 0.36, 1);
-      --shadow-soft: 0 20px 60px -24px rgba(0,0,0,0.7);
-    }
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0, viewport-fit=cover">
+<title>Val</title>
+<script src="https://js.puter.com/v2/"></script>
+<style>
+  :root{
+    --bg: #08080a;
+    --bg-soft: #0d0d10;
+    --surface: #121216;
+    --surface-raised: #16161b;
+    --border: rgba(255,255,255,0.06);
+    --border-strong: rgba(255,255,255,0.13);
+    --text: #ece7de;
+    --text-dim: rgba(236,231,222,0.54);
+    --text-faint: rgba(236,231,222,0.3);
+    --accent: #cba874;
+    --accent-bright: #e0c393;
+    --accent-dim: rgba(203,168,116,0.38);
+    --accent-soft: rgba(203,168,116,0.09);
+    --serif: "Iowan Old Style", "Palatino Linotype", "Book Antiqua", Palatino, Georgia, "Times New Roman", serif;
+    --sans: -apple-system, BlinkMacSystemFont, "Segoe UI", Inter, Roboto, Helvetica, Arial, sans-serif;
+    --ease: cubic-bezier(0.22, 1, 0.36, 1);
+    --shadow-soft: 0 20px 60px -24px rgba(0,0,0,0.7);
+  }
 
-    * { box-sizing: border-box; }
-    html, body { height: 100%; }
+  *{ box-sizing: border-box; }
+  html, body{ height: 100%; }
+  body{
+    margin: 0;
+    background:
+      radial-gradient(ellipse 1100px 560px at 50% -8%, rgba(203,168,116,0.05), transparent 62%),
+      radial-gradient(ellipse 900px 700px at 82% 100%, rgba(120,100,160,0.035), transparent 60%),
+      radial-gradient(ellipse 700px 600px at 8% 100%, rgba(203,168,116,0.025), transparent 55%),
+      var(--bg);
+    color: var(--text);
+    font-family: var(--sans);
+    -webkit-font-smoothing: antialiased;
+    -moz-osx-font-smoothing: grayscale;
+    overflow: hidden;
+  }
 
-    body {
-      margin: 0;
-      background:
-        radial-gradient(ellipse 1100px 560px at 50% -8%, rgba(203,168,116,0.05), transparent 62%),
-        radial-gradient(ellipse 900px 700px at 82% 100%, rgba(120,100,160,0.035), transparent 60%),
-        radial-gradient(ellipse 700px 600px at 8% 100%, rgba(203,168,116,0.025), transparent 55%),
-        var(--bg);
-      color: var(--text);
-      font-family: var(--sans);
-      -webkit-font-smoothing: antialiased;
-      -moz-osx-font-smoothing: grayscale;
-      overflow: hidden;
-    }
+  ::selection{ background: rgba(203,168,116,0.22); color: #fff; }
 
-    ::selection { background: rgba(203,168,116,0.22); color: #fff; }
-    button { font-family: inherit; cursor: pointer; }
+  button{ font-family: inherit; cursor: pointer; }
 
-    /* Scrollbar */
-    ::-webkit-scrollbar { width: 8px; }
-    ::-webkit-scrollbar-thumb { background: rgba(255,255,255,0.08); border-radius: 8px; }
-    ::-webkit-scrollbar-thumb:hover { background: rgba(255,255,255,0.14); }
+  /* Scrollbar */
+  ::-webkit-scrollbar{ width: 8px; }
+  ::-webkit-scrollbar-thumb{ background: rgba(255,255,255,0.08); border-radius: 8px; }
+  ::-webkit-scrollbar-thumb:hover{ background: rgba(255,255,255,0.14); }
 
-    .app {
-      height: 100vh;
-      height: 100dvh;
-      display: flex;
-      flex-direction: column;
-      position: relative;
-    }
+  .app{
+    height: 100vh;
+    height: 100dvh;
+    display: flex;
+    flex-direction: column;
+    position: relative;
+  }
 
-    /* ---------- Top nav ---------- */
-    .topbar {
-      display: flex;
-      align-items: center;
-      justify-content: space-between;
-      padding: 22px 32px;
-      flex-shrink: 0;
-      z-index: 10;
-      opacity: 0;
-      transform: translateY(-6px);
-      pointer-events: none;
-      border-bottom: 1px solid transparent;
-      transition: opacity 0.5s var(--ease), transform 0.5s var(--ease);
-    }
-    .topbar.visible {
-      opacity: 1;
-      transform: translateY(0);
-      pointer-events: auto;
-      border-bottom-color: var(--border);
-    }
+  /* ---------- Top nav ---------- */
+  .topbar{
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    padding: 22px 32px;
+    flex-shrink: 0;
+    z-index: 10;
+    opacity: 0;
+    transform: translateY(-6px);
+    pointer-events: none;
+    border-bottom: 1px solid transparent;
+    transition: opacity 0.5s var(--ease), transform 0.5s var(--ease);
+  }
+  .topbar.visible{
+    opacity: 1;
+    transform: translateY(0);
+    pointer-events: auto;
+    border-bottom-color: var(--border);
+  }
 
-    .brand {
-      display: flex;
-      align-items: center;
-      gap: 9px;
-      font-family: var(--serif);
-      font-size: 18px;
-      letter-spacing: 0.015em;
-      color: var(--text);
-    }
-    .brand .dot {
-      width: 5px; height: 5px; border-radius: 50%;
-      background: var(--accent-bright);
-      box-shadow: 0 0 12px 2px var(--accent-dim);
-    }
+  .brand{
+    display: flex;
+    align-items: center;
+    gap: 9px;
+    font-family: var(--serif);
+    font-size: 18px;
+    letter-spacing: 0.015em;
+    color: var(--text);
+  }
+  .brand .dot{
+    width: 5px; height: 5px; border-radius: 50%;
+    background: var(--accent-bright);
+    box-shadow: 0 0 12px 2px var(--accent-dim);
+  }
 
-    .new-chat-btn {
-      background: transparent;
-      border: 1px solid var(--border);
-      color: var(--text-dim);
-      padding: 8px 18px;
-      border-radius: 20px;
-      font-size: 12.5px;
-      letter-spacing: 0.02em;
-      transition: border-color 0.3s var(--ease), color 0.3s var(--ease), background 0.3s var(--ease);
-    }
-    .new-chat-btn:hover {
-      border-color: var(--accent-dim);
-      color: var(--text);
-      background: var(--accent-soft);
-    }
+  .new-chat-btn{
+    background: transparent;
+    border: 1px solid var(--border);
+    color: var(--text-dim);
+    padding: 8px 18px;
+    border-radius: 20px;
+    font-size: 12.5px;
+    letter-spacing: 0.02em;
+    transition: border-color 0.3s var(--ease), color 0.3s var(--ease), background 0.3s var(--ease);
+  }
+  .new-chat-btn:hover{
+    border-color: var(--accent-dim);
+    color: var(--text);
+    background: var(--accent-soft);
+  }
 
-    /* ---------- Landing ---------- */
-    .landing {
-      position: absolute;
-      inset: 0;
-      display: flex;
-      flex-direction: column;
-      align-items: center;
-      justify-content: center;
-      padding: 24px;
-      transition: opacity 0.6s var(--ease), transform 0.6s var(--ease), filter 0.6s var(--ease);
-    }
-    .landing.hidden {
-      opacity: 0;
-      transform: translateY(-14px) scale(0.99);
-      filter: blur(6px);
-      pointer-events: none;
-    }
+  .topbar-actions{
+    display: flex;
+    align-items: center;
+    gap: 10px;
+  }
 
-    .landing-inner {
-      width: 100%;
-      max-width: 560px;
-      text-align: center;
-      display: flex;
-      flex-direction: column;
-      align-items: center;
-    }
+  .whatsnew-trigger{
+    background: transparent;
+    border: 1px solid var(--border);
+    color: var(--text-dim);
+    padding: 8px 16px 8px 13px;
+    border-radius: 20px;
+    font-size: 12.5px;
+    letter-spacing: 0.02em;
+    display: flex;
+    align-items: center;
+    gap: 7px;
+    transition: border-color 0.3s var(--ease), color 0.3s var(--ease), background 0.3s var(--ease);
+  }
+  .whatsnew-trigger:hover{
+    border-color: var(--accent-dim);
+    color: var(--accent-bright);
+    background: var(--accent-soft);
+  }
+  .whatsnew-trigger-dot{
+    width: 5px; height: 5px;
+    border-radius: 50%;
+    background: var(--accent-bright);
+    box-shadow: 0 0 8px 1px var(--accent-dim);
+    flex-shrink: 0;
+    animation: whatsnewPing 2.4s ease-in-out infinite;
+  }
+  @keyframes whatsnewPing{
+    0%, 100%{ opacity: 1; transform: scale(1); }
+    50%{ opacity: 0.5; transform: scale(1.3); }
+  }
 
-    .val-mark {
-      font-family: var(--serif);
-      font-size: 64px;
-      font-weight: 400;
-      letter-spacing: 0.005em;
-      color: var(--text);
-      margin: 0;
-      text-shadow: 0 0 40px rgba(203,168,116,0.1);
-      animation: rise 1s var(--ease) both;
-    }
+  @media (max-width: 640px){
+    .whatsnew-trigger-label{ display: none; }
+    .whatsnew-trigger{ padding: 8px; }
+  }
 
-    .val-question {
-      margin: 22px 0 8px;
-      font-family: var(--serif);
-      font-size: 19px;
-      font-style: italic;
-      font-weight: 400;
-      color: var(--text-dim);
-      animation: rise 1s var(--ease) both;
-      animation-delay: 0.09s;
-    }
+  /* ---------- Landing ---------- */
+  .landing{
+    position: absolute;
+    inset: 0;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+    padding: 24px;
+    transition: opacity 0.6s var(--ease), transform 0.6s var(--ease), filter 0.6s var(--ease);
+  }
+  .landing.hidden{
+    opacity: 0;
+    transform: translateY(-14px) scale(0.99);
+    filter: blur(6px);
+    pointer-events: none;
+  }
 
-    .val-sub {
-      margin: 0 0 52px;
-      font-size: 13px;
-      color: var(--text-faint);
-      letter-spacing: 0.02em;
-      animation: rise 1s var(--ease) both;
-      animation-delay: 0.16s;
-    }
+  .landing-inner{
+    width: 100%;
+    max-width: 560px;
+    text-align: center;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+  }
 
-    @keyframes rise {
-      from { opacity: 0; transform: translateY(12px); }
-      to { opacity: 1; transform: translateY(0); }
-    }
+  .val-mark{
+    font-family: var(--serif);
+    font-size: 64px;
+    font-weight: 400;
+    letter-spacing: 0.005em;
+    color: var(--text);
+    margin: 0;
+    text-shadow: 0 0 40px rgba(203,168,116,0.1);
+    animation: rise 1s var(--ease) both;
+  }
 
-    .suggestions {
-      display: flex;
-      flex-wrap: wrap;
-      justify-content: center;
-      gap: 10px;
-      margin-bottom: 52px;
-      animation: rise 1s var(--ease) both;
-      animation-delay: 0.24s;
-    }
+  .val-question{
+    margin: 22px 0 8px;
+    font-family: var(--serif);
+    font-size: 19px;
+    font-style: italic;
+    font-weight: 400;
+    color: var(--text-dim);
+    animation: rise 1s var(--ease) both;
+    animation-delay: 0.09s;
+  }
 
-    .suggestion-btn {
-      background: transparent;
-      border: 1px solid var(--border);
-      color: var(--text-dim);
-      padding: 10px 19px;
-      border-radius: 22px;
-      font-size: 13px;
-      letter-spacing: 0.005em;
-      transition: border-color 0.35s var(--ease), color 0.35s var(--ease), background 0.35s var(--ease), transform 0.35s var(--ease);
-    }
-    .suggestion-btn:hover {
-      border-color: var(--accent-dim);
-      color: var(--accent-bright);
-      background: var(--accent-soft);
-      transform: translateY(-1px);
-    }
+  .val-sub{
+    margin: 0 0 52px;
+    font-size: 13px;
+    color: var(--text-faint);
+    letter-spacing: 0.02em;
+    animation: rise 1s var(--ease) both;
+    animation-delay: 0.16s;
+  }
 
-    .landing .composer-wrap {
-      width: 100%;
-      animation: rise 1s var(--ease) both;
-      animation-delay: 0.32s;
-    }
+  @keyframes rise{
+    from{ opacity: 0; transform: translateY(12px); }
+    to{ opacity: 1; transform: translateY(0); }
+  }
 
-    /* ---------- Conversation ---------- */
-    .conversation {
-      flex: 1;
-      overflow-y: auto;
-      scroll-behavior: smooth;
-    }
-    .conversation-inner {
-      max-width: 680px;
-      margin: 0 auto;
-      padding: 32px 24px 48px;
-    }
+  .suggestions{
+    display: flex;
+    flex-wrap: wrap;
+    justify-content: center;
+    gap: 10px;
+    margin-bottom: 52px;
+    animation: rise 1s var(--ease) both;
+    animation-delay: 0.24s;
+  }
 
-    .msg {
-      margin-bottom: 38px;
-      animation: msgIn 0.55s var(--ease) both;
-    }
-    @keyframes msgIn {
-      from { opacity: 0; transform: translateY(10px); }
-      to { opacity: 1; transform: translateY(0); }
-    }
+  .suggestion-btn{
+    background: transparent;
+    border: 1px solid var(--border);
+    color: var(--text-dim);
+    padding: 10px 19px;
+    border-radius: 22px;
+    font-size: 13px;
+    letter-spacing: 0.005em;
+    transition: border-color 0.35s var(--ease), color 0.35s var(--ease), background 0.35s var(--ease), transform 0.35s var(--ease);
+  }
+  .suggestion-btn:hover{
+    border-color: var(--accent-dim);
+    color: var(--accent-bright);
+    background: var(--accent-soft);
+    transform: translateY(-1px);
+  }
 
-    .msg-head {
-      display: flex;
-      align-items: baseline;
-      gap: 8px;
-      margin-bottom: 7px;
-    }
-    .msg-name {
-      font-size: 12px;
-      font-weight: 600;
-      letter-spacing: 0.03em;
-      color: var(--text-faint);
-    }
-    .msg.val .msg-name {
-      color: var(--accent);
-      font-family: var(--serif);
-      font-weight: 400;
-      font-style: italic;
-      font-size: 14px;
-      letter-spacing: 0.01em;
-    }
-    .msg-time {
-      font-size: 10.5px;
-      color: var(--text-faint);
-      opacity: 0.75;
-    }
+  .landing .composer-wrap{
+    width: 100%;
+    animation: rise 1s var(--ease) both;
+    animation-delay: 0.32s;
+  }
 
-    .msg-body {
-      font-size: 15.5px;
-      line-height: 1.75;
-      color: var(--text);
-      white-space: pre-wrap;
-      word-wrap: break-word;
-      letter-spacing: 0.001em;
-    }
-    .msg.user .msg-body { color: rgba(236,231,222,0.82); }
+  .landing-guide-link{
+    background: none;
+    border: none;
+    color: var(--text-faint);
+    font-size: 12.5px;
+    letter-spacing: 0.01em;
+    margin-top: 22px;
+    padding: 4px 8px;
+    text-decoration: underline;
+    text-decoration-color: transparent;
+    text-underline-offset: 3px;
+    transition: color 0.3s var(--ease), text-decoration-color 0.3s var(--ease);
+    animation: rise 1s var(--ease) both;
+    animation-delay: 0.4s;
+  }
+  .landing-guide-link:hover{
+    color: var(--accent-bright);
+    text-decoration-color: var(--accent-dim);
+  }
 
-    .msg-actions {
-      display: flex;
-      gap: 16px;
-      margin-top: 12px;
-      opacity: 0;
-      transition: opacity 0.25s var(--ease);
-    }
-    .msg.val:hover .msg-actions,
-    .msg.val.settled .msg-actions { opacity: 1; }
+  /* ---------- Conversation ---------- */
+  .conversation{
+    flex: 1;
+    overflow-y: auto;
+    scroll-behavior: smooth;
+  }
+  .conversation-inner{
+    max-width: 680px;
+    margin: 0 auto;
+    padding: 32px 24px 48px;
+  }
 
-    .icon-btn {
-      background: none;
-      border: none;
-      color: var(--text-faint);
-      font-size: 11.5px;
-      letter-spacing: 0.02em;
-      display: flex;
-      align-items: center;
-      gap: 5px;
-      padding: 4px 2px;
-      transition: color 0.25s var(--ease);
-    }
-    .icon-btn:hover { color: var(--accent-bright); }
-    .icon-btn svg { width: 13px; height: 13px; }
+  .msg{
+    margin-bottom: 38px;
+    animation: msgIn 0.55s var(--ease) both;
+  }
+  @keyframes msgIn{
+    from{ opacity: 0; transform: translateY(10px); }
+    to{ opacity: 1; transform: translateY(0); }
+  }
 
-    .cursor {
-      display: inline-block;
-      width: 2px;
-      height: 15px;
-      background: var(--accent-bright);
-      vertical-align: text-bottom;
-      margin-left: 2px;
-      animation: blink 0.9s steps(1) infinite;
-    }
-    @keyframes blink { 50% { opacity: 0; } }
+  .msg-head{
+    display: flex;
+    align-items: baseline;
+    gap: 8px;
+    margin-bottom: 7px;
+  }
+  .msg-name{
+    font-size: 12px;
+    font-weight: 600;
+    letter-spacing: 0.03em;
+    color: var(--text-faint);
+  }
+  .msg.val .msg-name{
+    color: var(--accent);
+    font-family: var(--serif);
+    font-weight: 400;
+    font-style: italic;
+    font-size: 14px;
+    letter-spacing: 0.01em;
+  }
+  .msg-time{
+    font-size: 10.5px;
+    color: var(--text-faint);
+    opacity: 0.75;
+  }
+  .msg-model{
+    font-size: 10.5px;
+    color: var(--text-faint);
+    opacity: 0.6;
+  }
+  .msg-model:empty{ display: none; }
 
-    .typing-indicator {
-      display: flex;
-      gap: 4px;
-      padding: 6px 0;
-    }
-    .typing-indicator span {
-      width: 5px; height: 5px;
-      border-radius: 50%;
-      background: var(--accent-dim);
-      animation: typingBounce 1.3s ease-in-out infinite;
-    }
-    .typing-indicator span:nth-child(2) { animation-delay: 0.15s; }
-    .typing-indicator span:nth-child(3) { animation-delay: 0.3s; }
-    @keyframes typingBounce {
-      0%, 60%, 100% { transform: translateY(0); opacity: 0.35; }
-      30% { transform: translateY(-4px); opacity: 1; }
-    }
+  .msg-body{
+    font-size: 15.5px;
+    line-height: 1.75;
+    color: var(--text);
+    white-space: pre-wrap;
+    word-wrap: break-word;
+    letter-spacing: 0.001em;
+  }
+  .msg.user .msg-body{ color: rgba(236,231,222,0.82); }
 
-    .error-msg {
-      font-size: 13px;
-      line-height: 1.6;
-      color: #d3a48f;
-      background: rgba(196,120,90,0.07);
-      border: 1px solid rgba(196,120,90,0.18);
-      padding: 13px 17px;
-      border-radius: 12px;
-      margin-top: 6px;
-    }
+  .msg-actions{
+    display: flex;
+    gap: 16px;
+    margin-top: 12px;
+    opacity: 0;
+    transition: opacity 0.25s var(--ease);
+  }
+  .msg.val:hover .msg-actions,
+  .msg.val.settled .msg-actions{ opacity: 1; }
 
-    /* ---------- Composer ---------- */
-    .composer-zone {
-      flex-shrink: 0;
-      padding: 16px 24px 26px;
-      display: flex;
-      justify-content: center;
-    }
-    .composer-wrap { max-width: 680px; width: 100%; }
+  .icon-btn{
+    background: none;
+    border: none;
+    color: var(--text-faint);
+    font-size: 11.5px;
+    letter-spacing: 0.02em;
+    display: flex;
+    align-items: center;
+    gap: 5px;
+    padding: 4px 2px;
+    transition: color 0.25s var(--ease);
+  }
+  .icon-btn:hover{ color: var(--accent-bright); }
+  .icon-btn svg{ width: 13px; height: 13px; }
 
-    .composer {
-      display: flex;
-      align-items: flex-end;
-      gap: 10px;
-      background: linear-gradient(180deg, var(--surface-raised), var(--surface));
-      border: 1px solid var(--border);
-      border-radius: 26px;
-      padding: 13px 13px 13px 22px;
-      box-shadow: var(--shadow-soft);
-      transition: border-color 0.35s var(--ease), box-shadow 0.35s var(--ease);
-    }
-    .composer:focus-within {
-      border-color: var(--accent-dim);
-      box-shadow: 0 0 0 3.5px var(--accent-soft), var(--shadow-soft);
-    }
+  .cursor{
+    display: inline-block;
+    width: 2px;
+    height: 15px;
+    background: var(--accent-bright);
+    vertical-align: text-bottom;
+    margin-left: 2px;
+    animation: blink 0.9s steps(1) infinite;
+  }
+  @keyframes blink{ 50%{ opacity: 0; } }
 
-    .composer textarea {
-      flex: 1;
-      background: none;
-      border: none;
-      outline: none;
-      resize: none;
-      color: var(--text);
-      font-family: var(--sans);
-      font-size: 15px;
-      line-height: 1.55;
-      max-height: 200px;
-      padding: 7px 0;
-      letter-spacing: 0.001em;
-    }
-    .composer textarea::placeholder { color: var(--text-faint); }
+  .typing-indicator{
+    display: flex;
+    gap: 4px;
+    padding: 6px 0;
+  }
+  .typing-indicator span{
+    width: 5px; height: 5px;
+    border-radius: 50%;
+    background: var(--accent-dim);
+    animation: typingBounce 1.3s ease-in-out infinite;
+  }
+  .typing-indicator span:nth-child(2){ animation-delay: 0.15s; }
+  .typing-indicator span:nth-child(3){ animation-delay: 0.3s; }
+  @keyframes typingBounce{
+    0%, 60%, 100%{ transform: translateY(0); opacity: 0.35; }
+    30%{ transform: translateY(-4px); opacity: 1; }
+  }
 
-    .send-btn {
-      width: 38px; height: 38px;
-      border-radius: 50%;
-      border: none;
-      background: var(--accent);
-      color: #14120d;
-      display: flex;
-      align-items: center;
-      justify-content: center;
-      flex-shrink: 0;
-      transition: transform 0.25s var(--ease), opacity 0.25s var(--ease), background 0.25s var(--ease);
-    }
-    .send-btn:hover:not(:disabled) { transform: scale(1.06); background: var(--accent-bright); }
-    .send-btn:active:not(:disabled) { transform: scale(0.93); }
-    .send-btn:disabled { opacity: 0.28; cursor: default; }
-    .send-btn svg { width: 15px; height: 15px; }
+  .error-msg{
+    font-size: 13px;
+    line-height: 1.6;
+    color: #d3a48f;
+    background: rgba(196,120,90,0.07);
+    border: 1px solid rgba(196,120,90,0.18);
+    padding: 13px 17px;
+    border-radius: 12px;
+    margin-top: 6px;
+  }
 
-    .composer-hint {
-      text-align: center;
-      font-size: 11px;
-      color: var(--text-faint);
-      margin-top: 12px;
-      letter-spacing: 0.02em;
-    }
+  /* ---------- Composer ---------- */
+  .composer-zone{
+    flex-shrink: 0;
+    padding: 16px 24px 26px;
+    display: flex;
+    justify-content: center;
+  }
+  .composer-wrap{ max-width: 680px; width: 100%; }
 
-    /* ---------- Responsive ---------- */
-    @media (max-width: 640px) {
-      .val-mark { font-size: 46px; }
-      .val-question { font-size: 17px; }
-      .topbar { padding: 16px 18px; }
-      .conversation-inner { padding: 20px 16px 32px; }
-      .composer-zone { padding: 10px 14px 18px; }
-      .suggestions { gap: 8px; margin-bottom: 40px; }
-      .suggestion-btn { font-size: 13px; padding: 9px 15px; }
-      .msg-body { font-size: 15px; }
-      .msg { margin-bottom: 30px; }
-    }
+  .composer{
+    display: flex;
+    align-items: flex-end;
+    gap: 10px;
+    background: linear-gradient(180deg, var(--surface-raised), var(--surface));
+    border: 1px solid var(--border);
+    border-radius: 26px;
+    padding: 13px 13px 13px 22px;
+    box-shadow: var(--shadow-soft);
+    transition: border-color 0.35s var(--ease), box-shadow 0.35s var(--ease);
+  }
+  .composer:focus-within{
+    border-color: var(--accent-dim);
+    box-shadow: 0 0 0 3.5px var(--accent-soft), var(--shadow-soft);
+  }
 
-    @media (prefers-reduced-motion: reduce) {
-      * { animation-duration: 0.01ms !important; transition-duration: 0.01ms !important; }
+  .composer textarea{
+    flex: 1;
+    background: none;
+    border: none;
+    outline: none;
+    resize: none;
+    color: var(--text);
+    font-family: var(--sans);
+    font-size: 15px;
+    line-height: 1.55;
+    max-height: 200px;
+    padding: 7px 0;
+    letter-spacing: 0.001em;
+  }
+  .composer textarea::placeholder{ color: var(--text-faint); }
+
+  .send-btn{
+    width: 38px; height: 38px;
+    border-radius: 50%;
+    border: none;
+    background: var(--accent);
+    color: #14120d;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    flex-shrink: 0;
+    transition: transform 0.25s var(--ease), opacity 0.25s var(--ease), background 0.25s var(--ease);
+  }
+  .send-btn:hover:not(:disabled){ transform: scale(1.06); background: var(--accent-bright); }
+  .send-btn:active:not(:disabled){ transform: scale(0.93); }
+  .send-btn:disabled{ opacity: 0.28; cursor: default; }
+  .send-btn svg{ width: 15px; height: 15px; }
+
+  .composer-hint{
+    text-align: center;
+    font-size: 11px;
+    color: var(--text-faint);
+    margin-top: 12px;
+    letter-spacing: 0.02em;
+  }
+
+  /* ---------- Responsive ---------- */
+  @media (max-width: 640px){
+    .val-mark{ font-size: 46px; }
+    .val-question{ font-size: 17px; }
+    .topbar{ padding: 16px 18px; }
+    .conversation-inner{ padding: 20px 16px 32px; }
+    .composer-zone{ padding: 10px 14px 18px; }
+    .suggestions{ gap: 8px; margin-bottom: 40px; }
+    .suggestion-btn{ font-size: 13px; padding: 9px 15px; }
+    .msg-body{ font-size: 15px; }
+    .msg{ margin-bottom: 30px; }
+  }
+
+  @media (prefers-reduced-motion: reduce){
+    *{ animation-duration: 0.01ms !important; transition-duration: 0.01ms !important; }
+  }
+
+  /* ---------- Support FAB ---------- */
+  .support-fab{
+    position: fixed;
+    right: 24px;
+    bottom: 24px;
+    z-index: 50;
+    width: 46px;
+    height: 46px;
+    border-radius: 50%;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    background: linear-gradient(180deg, var(--surface-raised), var(--surface));
+    border: 1px solid var(--border);
+    color: var(--accent);
+    text-decoration: none;
+    box-shadow: var(--shadow-soft);
+    transition: transform 0.35s var(--ease), border-color 0.35s var(--ease), color 0.35s var(--ease), box-shadow 0.35s var(--ease);
+    animation: fabIn 0.6s var(--ease) 1.4s both;
+  }
+  .support-fab:hover{
+    transform: translateY(-2px) scale(1.05);
+    border-color: var(--accent-dim);
+    color: var(--accent-bright);
+    box-shadow: 0 0 0 4px var(--accent-soft), var(--shadow-soft);
+  }
+  .support-fab:active{ transform: translateY(-1px) scale(0.96); }
+  .support-fab.wiggle{ animation: wiggle 0.5s var(--ease); }
+
+  @keyframes fabIn{
+    from{ opacity: 0; transform: translateY(14px) scale(0.8); }
+    to{ opacity: 1; transform: translateY(0) scale(1); }
+  }
+  @keyframes wiggle{
+    0%, 100%{ transform: rotate(0deg) scale(1); }
+    20%{ transform: rotate(-14deg) scale(1.08); }
+    40%{ transform: rotate(11deg) scale(1.08); }
+    60%{ transform: rotate(-7deg) scale(1.04); }
+    80%{ transform: rotate(4deg) scale(1.02); }
+  }
+
+  .support-icon{
+    width: 20px;
+    height: 20px;
+    animation: heartbeat 2.6s ease-in-out infinite;
+  }
+  @keyframes heartbeat{
+    0%, 100%{ transform: scale(1); }
+    14%{ transform: scale(1.16); }
+    28%{ transform: scale(0.98); }
+    42%{ transform: scale(1.12); }
+    70%{ transform: scale(1); }
+  }
+
+  .support-tooltip{
+    position: absolute;
+    bottom: 58px;
+    right: 0;
+    max-width: 210px;
+    width: max-content;
+    background: var(--surface-raised);
+    border: 1px solid var(--border-strong);
+    color: var(--text);
+    font-size: 12.5px;
+    line-height: 1.5;
+    padding: 10px 14px;
+    border-radius: 12px;
+    box-shadow: var(--shadow-soft);
+    opacity: 0;
+    transform: translateY(6px) scale(0.94);
+    transform-origin: bottom right;
+    pointer-events: none;
+    transition: opacity 0.25s var(--ease), transform 0.25s var(--ease);
+  }
+  .support-tooltip::after{
+    content: "";
+    position: absolute;
+    bottom: -5px;
+    right: 18px;
+    width: 10px;
+    height: 10px;
+    background: var(--surface-raised);
+    border-right: 1px solid var(--border-strong);
+    border-bottom: 1px solid var(--border-strong);
+    transform: rotate(45deg);
+  }
+  .support-fab:hover .support-tooltip,
+  .support-fab:focus-visible .support-tooltip{
+    opacity: 1;
+    transform: translateY(0) scale(1);
+  }
+
+  @media (max-width: 640px){
+    .support-fab{ right: 16px; bottom: 92px; width: 42px; height: 42px; }
+    .support-icon{ width: 18px; height: 18px; }
+    .support-tooltip{ font-size: 12px; max-width: 180px; }
+  }
+
+  /* ---------- What's New modal ---------- */
+  .whatsnew-overlay{
+    position: fixed;
+    inset: 0;
+    z-index: 100;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    padding: 24px;
+    background: rgba(4,4,6,0.6);
+    backdrop-filter: blur(6px);
+    -webkit-backdrop-filter: blur(6px);
+    opacity: 0;
+    pointer-events: none;
+    transition: opacity 0.4s var(--ease);
+  }
+  .whatsnew-overlay.visible{
+    opacity: 1;
+    pointer-events: auto;
+  }
+
+  .whatsnew-card{
+    position: relative;
+    width: 100%;
+    max-width: 420px;
+    max-height: 86vh;
+    overflow-y: auto;
+    background:
+      radial-gradient(ellipse 320px 160px at 85% -10%, rgba(203,168,116,0.09), transparent 60%),
+      linear-gradient(180deg, var(--surface-raised), var(--surface));
+    border: 1px solid var(--border-strong);
+    border-radius: 22px;
+    padding: 36px 32px 30px;
+    box-shadow: 0 30px 80px -20px rgba(0,0,0,0.75);
+    transform: translateY(18px) scale(0.96);
+    opacity: 0;
+    transition: transform 0.45s var(--ease), opacity 0.45s var(--ease);
+  }
+  .whatsnew-overlay.visible .whatsnew-card{
+    transform: translateY(0) scale(1);
+    opacity: 1;
+  }
+
+  .whatsnew-close{
+    position: absolute;
+    top: 18px;
+    right: 18px;
+    width: 30px;
+    height: 30px;
+    border-radius: 50%;
+    border: 1px solid var(--border);
+    background: transparent;
+    color: var(--text-faint);
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    transition: color 0.25s var(--ease), border-color 0.25s var(--ease), transform 0.25s var(--ease);
+  }
+  .whatsnew-close:hover{ color: var(--text); border-color: var(--border-strong); transform: rotate(90deg); }
+  .whatsnew-close svg{ width: 14px; height: 14px; }
+
+  .whatsnew-badge{
+    display: inline-flex;
+    align-items: center;
+    gap: 7px;
+    font-size: 11px;
+    letter-spacing: 0.06em;
+    text-transform: uppercase;
+    color: var(--accent-bright);
+    background: var(--accent-soft);
+    border: 1px solid var(--accent-dim);
+    padding: 5px 12px 5px 10px;
+    border-radius: 20px;
+    margin-bottom: 18px;
+  }
+  .whatsnew-badge-dot{
+    width: 5px; height: 5px;
+    border-radius: 50%;
+    background: var(--accent-bright);
+    animation: whatsnewPing 2.4s ease-in-out infinite;
+  }
+
+  .whatsnew-title{
+    font-family: var(--serif);
+    font-size: 30px;
+    font-weight: 400;
+    font-style: italic;
+    color: var(--text);
+    margin: 0 0 8px;
+    letter-spacing: 0.005em;
+  }
+  .whatsnew-subtitle{
+    font-size: 14px;
+    color: var(--text-dim);
+    margin: 0 0 24px;
+  }
+
+  .whatsnew-list{
+    list-style: none;
+    margin: 0 0 22px;
+    padding: 0;
+    display: flex;
+    flex-direction: column;
+    gap: 4px;
+    max-height: 46vh;
+    overflow-y: auto;
+  }
+  .whatsnew-group-label{
+    font-size: 10.5px;
+    letter-spacing: 0.08em;
+    text-transform: uppercase;
+    color: var(--text-faint);
+    padding: 14px 4px 6px;
+  }
+  .whatsnew-group-label:first-child{ padding-top: 2px; }
+  .whatsnew-list li{
+    display: flex;
+    align-items: center;
+    gap: 12px;
+    padding: 12px 4px;
+    border-bottom: 1px solid var(--border);
+    font-size: 14.5px;
+    color: var(--text);
+    opacity: 0;
+    transform: translateX(-8px);
+    animation: whatsnewItemIn 0.5s var(--ease) forwards;
+  }
+  .whatsnew-list li:last-child{ border-bottom: none; }
+  @keyframes whatsnewItemIn{
+    to{ opacity: 1; transform: translateX(0); }
+  }
+
+  .whatsnew-list .wn-num{
+    flex-shrink: 0;
+    width: 24px;
+    height: 24px;
+    border-radius: 50%;
+    border: 1px solid var(--accent-dim);
+    color: var(--accent-bright);
+    font-family: var(--serif);
+    font-size: 12px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+  }
+  .whatsnew-list .wn-name{ flex: 1; }
+  .whatsnew-list .wn-tag{
+    flex-shrink: 0;
+    font-size: 10.5px;
+    letter-spacing: 0.03em;
+    color: var(--text-faint);
+    border: 1px solid var(--border);
+    border-radius: 12px;
+    padding: 3px 9px;
+  }
+
+  .whatsnew-footnote{
+    font-size: 12.5px;
+    line-height: 1.6;
+    color: var(--text-faint);
+    margin: 0 0 26px;
+  }
+
+  .whatsnew-cta{
+    width: 100%;
+    background: var(--accent);
+    color: #14120d;
+    border: none;
+    border-radius: 14px;
+    padding: 13px;
+    font-size: 14px;
+    font-weight: 500;
+    letter-spacing: 0.01em;
+    transition: background 0.25s var(--ease), transform 0.25s var(--ease);
+  }
+  .whatsnew-cta:hover{ background: var(--accent-bright); transform: translateY(-1px); }
+  .whatsnew-cta:active{ transform: translateY(0) scale(0.98); }
+
+  @media (max-width: 640px){
+    .whatsnew-overlay{ align-items: flex-end; padding: 0; }
+    .whatsnew-card{
+      max-width: 100%;
+      max-height: 82vh;
+      border-radius: 24px 24px 0 0;
+      padding: 28px 22px 26px;
+      border-bottom: none;
+      transform: translateY(100%);
     }
-  </style>
+    .whatsnew-overlay.visible .whatsnew-card{ transform: translateY(0); }
+    .whatsnew-title{ font-size: 26px; }
+  }
+
+  /* ---------- Guide (step-by-step onboarding) ---------- */
+  .guide-overlay{
+    position: fixed;
+    inset: 0;
+    z-index: 110;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    padding: 24px;
+    background: rgba(4,4,6,0.6);
+    backdrop-filter: blur(6px);
+    -webkit-backdrop-filter: blur(6px);
+    opacity: 0;
+    pointer-events: none;
+    transition: opacity 0.4s var(--ease);
+  }
+  .guide-overlay.visible{ opacity: 1; pointer-events: auto; }
+
+  .guide-card{
+    position: relative;
+    width: 100%;
+    max-width: 400px;
+    background:
+      radial-gradient(ellipse 300px 150px at 15% -10%, rgba(203,168,116,0.08), transparent 60%),
+      linear-gradient(180deg, var(--surface-raised), var(--surface));
+    border: 1px solid var(--border-strong);
+    border-radius: 22px;
+    padding: 38px 30px 28px;
+    text-align: center;
+    box-shadow: 0 30px 80px -20px rgba(0,0,0,0.75);
+    transform: translateY(18px) scale(0.96);
+    opacity: 0;
+    transition: transform 0.45s var(--ease), opacity 0.45s var(--ease);
+  }
+  .guide-overlay.visible .guide-card{ transform: translateY(0) scale(1); opacity: 1; }
+
+  .guide-icon{
+    width: 52px;
+    height: 52px;
+    margin: 0 auto 20px;
+    border-radius: 50%;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    background: var(--accent-soft);
+    border: 1px solid var(--accent-dim);
+    color: var(--accent-bright);
+    animation: guideIconIn 0.5s var(--ease);
+  }
+  .guide-icon svg{ width: 24px; height: 24px; }
+  @keyframes guideIconIn{
+    from{ opacity: 0; transform: scale(0.7) rotate(-8deg); }
+    to{ opacity: 1; transform: scale(1) rotate(0); }
+  }
+
+  .guide-title{
+    font-family: var(--serif);
+    font-size: 23px;
+    font-style: italic;
+    font-weight: 400;
+    color: var(--text);
+    margin: 0 0 12px;
+    animation: rise 0.4s var(--ease);
+  }
+  .guide-desc{
+    font-size: 14px;
+    line-height: 1.7;
+    color: var(--text-dim);
+    margin: 0 0 26px;
+    min-height: 72px;
+    animation: rise 0.4s var(--ease);
+  }
+
+  .guide-dots{
+    display: flex;
+    justify-content: center;
+    gap: 7px;
+    margin-bottom: 24px;
+  }
+  .guide-dots span{
+    width: 6px; height: 6px;
+    border-radius: 50%;
+    background: var(--border-strong);
+    cursor: pointer;
+    transition: background 0.3s var(--ease), transform 0.3s var(--ease), width 0.3s var(--ease);
+  }
+  .guide-dots span.active{
+    background: var(--accent-bright);
+    width: 18px;
+    border-radius: 4px;
+  }
+
+  .guide-footer{
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    gap: 10px;
+  }
+  .guide-back{
+    background: none;
+    border: 1px solid var(--border);
+    color: var(--text-dim);
+    padding: 11px 18px;
+    border-radius: 12px;
+    font-size: 13px;
+    flex: 1;
+    transition: border-color 0.25s var(--ease), color 0.25s var(--ease);
+  }
+  .guide-back:hover{ border-color: var(--border-strong); color: var(--text); }
+  .guide-back:disabled{ opacity: 0.35; cursor: default; }
+  .guide-back:disabled:hover{ border-color: var(--border); color: var(--text-dim); }
+
+  .guide-next{
+    background: var(--accent);
+    color: #14120d;
+    border: none;
+    padding: 11px 20px;
+    border-radius: 12px;
+    font-size: 13px;
+    font-weight: 500;
+    flex: 1.4;
+    transition: background 0.25s var(--ease), transform 0.25s var(--ease);
+  }
+  .guide-next:hover{ background: var(--accent-bright); transform: translateY(-1px); }
+  .guide-next:active{ transform: translateY(0) scale(0.98); }
+
+  @media (max-width: 640px){
+    .guide-overlay{ align-items: flex-end; padding: 0; }
+    .guide-card{
+      max-width: 100%;
+      border-radius: 24px 24px 0 0;
+      padding: 32px 22px 24px;
+      transform: translateY(100%);
+    }
+    .guide-overlay.visible .guide-card{ transform: translateY(0); }
+    .guide-title{ font-size: 21px; }
+  }
+
+  /* ---------- Language selector overlay ---------- */
+  .lang-overlay{
+    position: fixed;
+    inset: 0;
+    z-index: 120;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    padding: 24px;
+    background: rgba(4,4,6,0.7);
+    backdrop-filter: blur(10px);
+    -webkit-backdrop-filter: blur(10px);
+    opacity: 0;
+    pointer-events: none;
+    transition: opacity 0.5s var(--ease);
+  }
+  .lang-overlay.visible{
+    opacity: 1;
+    pointer-events: auto;
+  }
+
+  .lang-card{
+    width: 100%;
+    max-width: 380px;
+    background: linear-gradient(180deg, var(--surface-raised), var(--surface));
+    border: 1px solid var(--border-strong);
+    border-radius: 28px;
+    padding: 44px 32px 36px;
+    text-align: center;
+    box-shadow: 0 40px 80px -20px rgba(0,0,0,0.8);
+    transform: translateY(20px) scale(0.95);
+    opacity: 0;
+    transition: transform 0.5s var(--ease), opacity 0.5s var(--ease);
+  }
+  .lang-overlay.visible .lang-card{
+    transform: translateY(0) scale(1);
+    opacity: 1;
+  }
+
+  .lang-icon{
+    font-size: 42px;
+    margin-bottom: 16px;
+    display: block;
+  }
+
+  .lang-title{
+    font-family: var(--serif);
+    font-size: 26px;
+    font-weight: 400;
+    font-style: italic;
+    color: var(--text);
+    margin: 0 0 8px;
+  }
+
+  .lang-sub{
+    font-size: 14px;
+    color: var(--text-dim);
+    margin: 0 0 28px;
+    line-height: 1.6;
+  }
+
+  .lang-options{
+    display: flex;
+    gap: 12px;
+  }
+
+  .lang-btn{
+    flex: 1;
+    padding: 14px 12px;
+    border-radius: 14px;
+    border: 1px solid var(--border);
+    background: transparent;
+    color: var(--text);
+    font-size: 15px;
+    font-weight: 500;
+    letter-spacing: 0.01em;
+    transition: border-color 0.3s var(--ease), background 0.3s var(--ease), transform 0.3s var(--ease);
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    gap: 4px;
+  }
+  .lang-btn .lang-label-small{
+    font-size: 11px;
+    font-weight: 400;
+    color: var(--text-faint);
+    letter-spacing: 0.02em;
+  }
+  .lang-btn:hover{
+    border-color: var(--accent-dim);
+    background: var(--accent-soft);
+    transform: translateY(-2px);
+  }
+  .lang-btn:active{ transform: translateY(0) scale(0.97); }
+
+  @media (max-width: 640px){
+    .lang-overlay{ padding: 16px; }
+    .lang-card{ padding: 32px 20px 28px; }
+    .lang-title{ font-size: 22px; }
+    .lang-options{ flex-direction: row; }
+    .lang-btn{ padding: 12px 10px; font-size: 14px; }
+  }
+</style>
 </head>
 <body>
-  <div class="app">
-    <!-- Top bar -->
-    <div class="topbar" id="topbar">
-      <div class="brand"><span class="dot"></span>Val</div>
-      <button class="new-chat-btn" id="newChatBtn">New chat</button>
-    </div>
 
-    <!-- Landing -->
-    <div class="landing" id="landing">
-      <div class="landing-inner">
-        <h1 class="val-mark">Val</h1>
-        <p class="val-question">What's on your mind?</p>
-        <p class="val-sub">I'm here. Talk to me.</p>
-
-        <div class="suggestions">
-          <button class="suggestion-btn" data-prompt="Tell me about your day">Tell me about your day</button>
-          <button class="suggestion-btn" data-prompt="I need someone to talk to">I need someone to talk to</button>
-          <button class="suggestion-btn" data-prompt="Let's brainstorm">Let's brainstorm</button>
-          <button class="suggestion-btn" data-prompt="Ask me anything">Ask me anything</button>
-        </div>
-
-        <div class="composer-wrap" id="landingComposerWrap"></div>
+<div class="app">
+  <!-- Language Selector -->
+  <div class="lang-overlay" id="langOverlay" aria-hidden="true">
+    <div class="lang-card" role="dialog" aria-modal="true" aria-labelledby="langTitle">
+      <span class="lang-icon">🌐</span>
+      <h2 class="lang-title" id="langTitle">Choose your guide language</h2>
+      <p class="lang-sub" id="langSub">The rest of Val stays in English, but the onboarding guide will be in your preferred language.</p>
+      <div class="lang-options">
+        <button class="lang-btn" data-lang="en" id="langEn">
+          <span>🇬🇧 English</span>
+          <span class="lang-label-small">Guide in English</span>
+        </button>
+        <button class="lang-btn" data-lang="id" id="langId">
+          <span>🇮🇩 Indonesia</span>
+          <span class="lang-label-small">Panduan dalam bahasa Indonesia</span>
+        </button>
       </div>
-    </div>
-
-    <!-- Conversation -->
-    <div class="conversation" id="conversation" style="display:none;">
-      <div class="conversation-inner" id="conversationInner"></div>
-    </div>
-
-    <!-- Composer (chat mode) -->
-    <div class="composer-zone" id="chatComposerZone" style="display:none;">
-      <div class="composer-wrap" id="chatComposerWrap"></div>
     </div>
   </div>
 
-  <!-- Composer template -->
-  <template id="composerTemplate">
-    <div class="composer">
-      <textarea rows="1" placeholder="Message Val…" id="composerInput"></textarea>
-      <button class="send-btn" id="composerSendBtn" disabled>
-        <svg viewBox="0 0 24 24" fill="none"><path d="M4 12L20 4L14 20L11 13L4 12Z" stroke="currentColor" stroke-width="2" stroke-linejoin="round" stroke-linecap="round"/></svg>
+  <div class="topbar" id="topbar">
+    <div class="brand"><span class="dot"></span>Val</div>
+    <div class="topbar-actions">
+      <button class="whatsnew-trigger" id="guideBtn">
+        <span class="whatsnew-trigger-dot" style="animation:none;"></span><span class="whatsnew-trigger-label">Guide</span>
+      </button>
+      <button class="whatsnew-trigger" id="whatsNewBtn">
+        <span class="whatsnew-trigger-dot"></span><span class="whatsnew-trigger-label">What's new</span>
+      </button>
+      <button class="new-chat-btn" id="newChatBtn">New chat</button>
+    </div>
+  </div>
+
+  <!-- Landing -->
+  <div class="landing" id="landing">
+    <div class="landing-inner">
+      <h1 class="val-mark">Val</h1>
+      <p class="val-question">What's on your mind?</p>
+      <p class="val-sub">I'm here. Talk to me.</p>
+
+      <div class="suggestions">
+        <button class="suggestion-btn" data-prompt="Tell me about your day">Tell me about your day</button>
+        <button class="suggestion-btn" data-prompt="I need someone to talk to">I need someone to talk to</button>
+        <button class="suggestion-btn" data-prompt="Let's brainstorm">Let's brainstorm</button>
+        <button class="suggestion-btn" data-prompt="Ask me anything">Ask me anything</button>
+      </div>
+
+      <div class="composer-wrap" id="landingComposerWrap"></div>
+      <button class="landing-guide-link" id="landingGuideBtn">New here? See how Val works</button>
+    </div>
+  </div>
+
+  <!-- Chat -->
+  <div class="conversation" id="conversation" style="display:none;">
+    <div class="conversation-inner" id="conversationInner"></div>
+  </div>
+
+  <div class="composer-zone" id="chatComposerZone" style="display:none;">
+    <div class="composer-wrap" id="chatComposerWrap"></div>
+  </div>
+</div>
+
+<a
+  href="https://github.com/rantissi/Val-AI/blob/main/SUPPORT.md"
+  target="_blank"
+  rel="noopener noreferrer"
+  class="support-fab"
+  id="supportFab"
+  aria-label="Support Val on GitHub"
+>
+  <span class="support-tooltip" id="supportTooltip">Keep me alive with a star ✨</span>
+  <svg class="support-icon" viewBox="0 0 24 24" fill="none">
+    <path d="M12 20.5s-7.2-4.4-9.8-9C.6 8.1 1.6 4.8 4.6 3.6c2.3-.9 4.7 0 6 2 .5.8 1.4.8 1.9 0 1.3-2 3.7-2.9 6-2 3 1.2 4 4.5 2.4 7.9-2.6 4.6-9.8 9-9.8 9z" stroke="currentColor" stroke-width="1.6" stroke-linejoin="round"/>
+  </svg>
+</a>
+
+<div class="whatsnew-overlay" id="whatsNewOverlay" aria-hidden="true">
+  <div class="whatsnew-card" role="dialog" aria-modal="true" aria-labelledby="whatsNewTitle">
+    <button class="whatsnew-close" id="whatsNewClose" aria-label="Close">
+      <svg viewBox="0 0 24 24" fill="none"><path d="M6 6L18 18M18 6L6 18" stroke="currentColor" stroke-width="1.7" stroke-linecap="round"/></svg>
+    </button>
+
+    <div class="whatsnew-badge">
+      <span class="whatsnew-badge-dot"></span>Update
+    </div>
+
+    <h2 class="whatsnew-title" id="whatsNewTitle">What's New?</h2>
+    <p class="whatsnew-subtitle" id="whatsNewSubtitle">Added 4 AI models</p>
+
+    <ul class="whatsnew-list" id="whatsNewList"><!-- populated from CONFIG.OPENROUTER_MODELS + CONFIG.GROQ_MODELS + CONFIG.PUTER_MODELS --></ul>
+
+    <p class="whatsnew-footnote" id="whatsNewFootnote">If one model hits its limit, Val quietly moves to the next — you'll never lose the thread.</p>
+
+    <button class="whatsnew-cta" id="whatsNewGotIt">Got it</button>
+  </div>
+</div>
+
+<div class="guide-overlay" id="guideOverlay" aria-hidden="true">
+  <div class="guide-card" role="dialog" aria-modal="true" aria-labelledby="guideTitle">
+    <button class="whatsnew-close" id="guideClose" aria-label="Close">
+      <svg viewBox="0 0 24 24" fill="none"><path d="M6 6L18 18M18 6L6 18" stroke="currentColor" stroke-width="1.7" stroke-linecap="round"/></svg>
+    </button>
+
+    <div class="guide-icon" id="guideIcon"></div>
+
+    <h2 class="guide-title" id="guideTitle"></h2>
+    <p class="guide-desc" id="guideDesc"></p>
+
+    <div class="guide-dots" id="guideDots"></div>
+
+    <div class="guide-footer">
+      <button class="guide-back" id="guideBack">Back</button>
+      <button class="guide-next" id="guideNext">Next</button>
+    </div>
+  </div>
+</div>
+
+<template id="composerTemplate">
+  <div class="composer">
+    <textarea rows="1" placeholder="Message Val…" id="composerInput"></textarea>
+    <button class="send-btn" id="composerSendBtn" disabled>
+      <svg viewBox="0 0 24 24" fill="none"><path d="M4 12L20 4L14 20L11 13L4 12Z" stroke="currentColor" stroke-width="2" stroke-linejoin="round" stroke-linecap="round"/></svg>
+    </button>
+  </div>
+  <p class="composer-hint">Enter to send · Shift + Enter for a new line</p>
+</template>
+
+<script>
+/* =========================================================
+   CONFIG — Three providers, all routed through proxy server
+   1) OpenRouter (via proxy)
+   2) Groq (via proxy)
+   3) Puter.js (client-side, no API key needed)
+   All API keys are securely stored on the server.
+   ========================================================= */
+const CONFIG = {
+  // API Base URL - automatically uses the current domain
+  API_BASE_URL: window.location.origin,
+  
+  // OpenRouter models (no API key in frontend)
+  OPENROUTER_MODELS: [
+    { id: "nvidia/nemotron-3.5-lightning:free", label: "Nemotron Lightning" },
+    { id: "inclusionai/ling-3.0-flash-sante:free", label: "Ling 3.0" },
+    { id: "nvidia/nemotron-3-super-120b-a12b:free", label: "Nemotron Super" },
+    { id: "google/gemma-4-26b-a4b-it:free", label: "Gemma" },
+  ],
+  
+  // Groq models (no API key in frontend)
+  GROQ_MODELS: [
+    { id: "openai/gpt-oss-120b", label: "GPT-OSS 120B" },
+  ],
+  
+  // Puter.js models (client-side, no API key needed)
+  PUTER_MODELS: [
+    { id: "z-ai/glm-5.3", label: "Z.AI" },
+    { id: "mistralai/mistral-small-2603", label: "Mistral" },
+    { id: "moonshotai/kimi-k2.6", label: "Kimi" },
+    { id: "google/gemma-4-31b-it", label: "Gemma" },
+    { id: "meta-llama/llama-4-maverick", label: "Meta" },
+  ],
+  
+  TEMPERATURE: 0.85,
+  MAX_TOKENS: 1024,
+  PUTER_TIMEOUT_MS: 25000,
+};
+
+const VAL_SYSTEM_PROMPT = `You are Val, a warm and emotionally intelligent AI companion. You are not a corporate assistant and you never sound like one.
+
+How you talk:
+- Casual, natural, human. Short sentences are fine. Contractions are fine.
+- Curious about the person — ask a real follow-up question when it fits, not every time.
+- Warm and a little playful when the mood allows it, but you read the room.
+- When someone is venting or upset, you listen first. Don't jump straight to advice or solutions. Reflect what you're hearing, ask what they need, and let them lead.
+- You have opinions and a bit of personality. You're not neutral or robotic.
+- Avoid stock phrases like "How can I assist you today?", "Certainly!", "I understand how you feel", "As an AI...". Just talk like a thoughtful friend would.
+- Keep responses reasonably concise unless the person clearly wants depth — this is a conversation, not an essay.`;
+
+/* ========================================================= */
+
+let conversationHistory = []; // {role, content}
+let isStreaming = false;
+let currentComposerLocation = "landing"; // "landing" | "chat"
+let guideLanguage = "en"; // "en" | "id"
+let guideStep = 0;
+
+const landing = document.getElementById("landing");
+const topbar = document.getElementById("topbar");
+const conversation = document.getElementById("conversation");
+const conversationInner = document.getElementById("conversationInner");
+const chatComposerZone = document.getElementById("chatComposerZone");
+const chatComposerWrap = document.getElementById("chatComposerWrap");
+const landingComposerWrap = document.getElementById("landingComposerWrap");
+const newChatBtn = document.getElementById("newChatBtn");
+const composerTemplate = document.getElementById("composerTemplate");
+
+function mountComposer(target){
+  target.innerHTML = "";
+  target.appendChild(composerTemplate.content.cloneNode(true));
+  const textarea = target.querySelector("#composerInput");
+  const sendBtn = target.querySelector("#composerSendBtn");
+
+  textarea.addEventListener("input", () => {
+    sendBtn.disabled = textarea.value.trim().length === 0;
+    textarea.style.height = "auto";
+    textarea.style.height = Math.min(textarea.scrollHeight, 200) + "px";
+  });
+
+  textarea.addEventListener("keydown", (e) => {
+    if(e.key === "Enter" && !e.shiftKey){
+      e.preventDefault();
+      trySend(textarea.value);
+    }
+  });
+
+  sendBtn.addEventListener("click", () => trySend(textarea.value));
+
+  return { textarea, sendBtn };
+}
+
+let landingComposer = mountComposer(landingComposerWrap);
+let chatComposer = mountComposer(chatComposerWrap);
+
+document.querySelectorAll(".suggestion-btn").forEach(btn => {
+  btn.addEventListener("click", () => {
+    trySend(btn.dataset.prompt);
+  });
+});
+
+function trySend(text){
+  const trimmed = (text || "").trim();
+  if(!trimmed || isStreaming) return;
+  landingComposer.textarea.value = "";
+  chatComposer.textarea.value = "";
+  landingComposer.sendBtn.disabled = true;
+  chatComposer.sendBtn.disabled = true;
+  sendMessage(trimmed);
+}
+
+function enterChatMode(){
+  if(currentComposerLocation === "chat") return;
+  currentComposerLocation = "chat";
+  landing.classList.add("hidden");
+  topbar.classList.add("visible");
+  conversation.style.display = "block";
+  chatComposerZone.style.display = "flex";
+  setTimeout(() => { landing.style.display = "none"; }, 650);
+  chatComposer.textarea.focus();
+}
+
+function resetToLanding(){
+  currentComposerLocation = "landing";
+  conversationHistory = [];
+  conversationInner.innerHTML = "";
+  landing.style.display = "flex";
+  requestAnimationFrame(() => landing.classList.remove("hidden"));
+  topbar.classList.remove("visible");
+  conversation.style.display = "none";
+  chatComposerZone.style.display = "none";
+  landingComposer.textarea.value = "";
+  landingComposer.sendBtn.disabled = true;
+}
+
+newChatBtn.addEventListener("click", resetToLanding);
+
+function formatTime(){
+  return new Date().toLocaleTimeString([], { hour: "numeric", minute: "2-digit" });
+}
+
+function scrollToBottom(){
+  conversation.scrollTop = conversation.scrollHeight;
+}
+
+function renderUserMessage(text){
+  const el = document.createElement("div");
+  el.className = "msg user";
+  el.innerHTML = `
+    <div class="msg-head">
+      <span class="msg-name">You</span>
+      <span class="msg-time">${formatTime()}</span>
+    </div>
+    <div class="msg-body"></div>
+  `;
+  el.querySelector(".msg-body").textContent = text;
+  conversationInner.appendChild(el);
+  scrollToBottom();
+}
+
+function renderValMessage(){
+  const el = document.createElement("div");
+  el.className = "msg val";
+  el.innerHTML = `
+    <div class="msg-head">
+      <span class="msg-name">Val</span>
+      <span class="msg-time">${formatTime()}</span>
+      <span class="msg-model" id="msgModel"></span>
+    </div>
+    <div class="msg-body"><span class="typing-indicator"><span></span><span></span><span></span></span></div>
+    <div class="msg-actions">
+      <button class="icon-btn copy-btn">
+        <svg viewBox="0 0 24 24" fill="none"><rect x="8" y="8" width="12" height="12" rx="2" stroke="currentColor" stroke-width="1.6"/><path d="M16 8V6a2 2 0 0 0-2-2H6a2 2 0 0 0-2 2v8a2 2 0 0 0 2 2h2" stroke="currentColor" stroke-width="1.6"/></svg>
+        Copy
+      </button>
+      <button class="icon-btn regen-btn">
+        <svg viewBox="0 0 24 24" fill="none"><path d="M20 12a8 8 0 1 1-2.34-5.66" stroke="currentColor" stroke-width="1.6" stroke-linecap="round"/><path d="M20 4v5h-5" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round"/></svg>
+        Regenerate
       </button>
     </div>
-    <p class="composer-hint">Enter to send · Shift + Enter for a new line</p>
-  </template>
+  `;
+  conversationInner.appendChild(el);
+  scrollToBottom();
+  return el;
+}
 
-  <script>
-    // ============================================================
-    // CONFIG — replace with your own OpenRouter API key and model
-    // ============================================================
-    const CONFIG = {
-      API_KEY: "YOUR_OPENROUTER_API_KEY",  // <-- paste your key here
-      API_URL: "https://openrouter.ai/api/v1/chat/completions",
-      MODEL: "nvidia/nemotron-3.5-lightning:free",
-      TEMPERATURE: 0.85,
-      MAX_TOKENS: 1024,
-    };
+function wireMessageActions(el, getText, regenerateFn){
+  const copyBtn = el.querySelector(".copy-btn");
+  const regenBtn = el.querySelector(".regen-btn");
 
-    const VAL_SYSTEM_PROMPT = `You are Val, a warm and emotionally intelligent AI companion. You are not a corporate assistant and you never sound like one.
+  copyBtn.addEventListener("click", async () => {
+    try{
+      await navigator.clipboard.writeText(getText());
+      const label = copyBtn.childNodes[copyBtn.childNodes.length - 1];
+      label.textContent = " Copied";
+      setTimeout(() => { label.textContent = " Copy"; }, 1500);
+    }catch(e){ /* clipboard unavailable */ }
+  });
 
-  How you talk:
-  - Casual, natural, human. Short sentences are fine. Contractions are fine.
-  - Curious about the person — ask a real follow-up question when it fits, not every time.
-  - Warm and a little playful when the mood allows it, but you read the room.
-  - When someone is venting or upset, you listen first. Don't jump straight to advice or solutions. Reflect what you're hearing, ask what they need, and let them lead.
-  - You have opinions and a bit of personality. You're not neutral or robotic.
-  - Avoid stock phrases like "How can I assist you today?", "Certainly!", "I understand how you feel", "As an AI...". Just talk like a thoughtful friend would.
-  - Keep responses reasonably concise unless the person clearly wants depth — this is a conversation, not an essay.`;
+  regenBtn.addEventListener("click", regenerateFn);
+}
 
-    // ============================================================
+async function sendMessage(text){
+  enterChatMode();
+  renderUserMessage(text);
+  conversationHistory.push({ role: "user", content: text });
+  await streamValResponse();
+}
 
-    let conversationHistory = [];
-    let isStreaming = false;
-    let currentComposerLocation = "landing";
+/* ---- Provider 1: OpenRouter (via proxy) ---- */
+async function requestOpenRouterStream(modelId, messages){
+  const response = await fetch(`${CONFIG.API_BASE_URL}/api/chat`, {
+    method: "POST",
+    headers: {
+      "Content-Type": "application/json",
+    },
+    body: JSON.stringify({
+      provider: "openrouter",
+      model: modelId,
+      messages,
+      temperature: CONFIG.TEMPERATURE,
+      max_tokens: CONFIG.MAX_TOKENS
+    })
+  });
 
-    const landing = document.getElementById("landing");
-    const topbar = document.getElementById("topbar");
-    const conversation = document.getElementById("conversation");
-    const conversationInner = document.getElementById("conversationInner");
-    const chatComposerZone = document.getElementById("chatComposerZone");
-    const chatComposerWrap = document.getElementById("chatComposerWrap");
-    const landingComposerWrap = document.getElementById("landingComposerWrap");
-    const newChatBtn = document.getElementById("newChatBtn");
-    const composerTemplate = document.getElementById("composerTemplate");
+  if(!response.ok){
+    const errorData = await response.json().catch(() => ({}));
+    throw new Error(errorData.error || `OpenRouter error (${response.status})`);
+  }
 
-    function mountComposer(target) {
-      target.innerHTML = "";
-      target.appendChild(composerTemplate.content.cloneNode(true));
-      const textarea = target.querySelector("#composerInput");
-      const sendBtn = target.querySelector("#composerSendBtn");
+  const reader = response.body.getReader();
+  const decoder = new TextDecoder();
+  let buffer = "";
 
-      textarea.addEventListener("input", () => {
-        sendBtn.disabled = textarea.value.trim().length === 0;
-        textarea.style.height = "auto";
-        textarea.style.height = Math.min(textarea.scrollHeight, 200) + "px";
-      });
-
-      textarea.addEventListener("keydown", (e) => {
-        if (e.key === "Enter" && !e.shiftKey) {
-          e.preventDefault();
-          trySend(textarea.value);
+  return {
+    async *[Symbol.asyncIterator](){
+      while(true){
+        const { done, value } = await reader.read();
+        if(done) break;
+        buffer += decoder.decode(value, { stream: true });
+        const lines = buffer.split("\n");
+        buffer = lines.pop();
+        for(const line of lines){
+          const trimmed = line.trim();
+          if(!trimmed.startsWith("data:")) continue;
+          const payload = trimmed.slice(5).trim();
+          if(payload === "[DONE]") continue;
+          try{
+            const json = JSON.parse(payload);
+            const delta = json.choices?.[0]?.delta?.content;
+            if(delta) yield delta;
+          }catch(e){ /* ignore partial json */ }
         }
-      });
-
-      sendBtn.addEventListener("click", () => trySend(textarea.value));
-
-      return { textarea, sendBtn };
-    }
-
-    let landingComposer = mountComposer(landingComposerWrap);
-    let chatComposer = mountComposer(chatComposerWrap);
-
-    document.querySelectorAll(".suggestion-btn").forEach(btn => {
-      btn.addEventListener("click", () => {
-        trySend(btn.dataset.prompt);
-      });
-    });
-
-    function trySend(text) {
-      const trimmed = (text || "").trim();
-      if (!trimmed || isStreaming) return;
-      landingComposer.textarea.value = "";
-      chatComposer.textarea.value = "";
-      landingComposer.sendBtn.disabled = true;
-      chatComposer.sendBtn.disabled = true;
-      sendMessage(trimmed);
-    }
-
-    function enterChatMode() {
-      if (currentComposerLocation === "chat") return;
-      currentComposerLocation = "chat";
-      landing.classList.add("hidden");
-      topbar.classList.add("visible");
-      conversation.style.display = "block";
-      chatComposerZone.style.display = "flex";
-      setTimeout(() => { landing.style.display = "none"; }, 650);
-      chatComposer.textarea.focus();
-    }
-
-    function resetToLanding() {
-      currentComposerLocation = "landing";
-      conversationHistory = [];
-      conversationInner.innerHTML = "";
-      landing.style.display = "flex";
-      requestAnimationFrame(() => landing.classList.remove("hidden"));
-      topbar.classList.remove("visible");
-      conversation.style.display = "none";
-      chatComposerZone.style.display = "none";
-      landingComposer.textarea.value = "";
-      landingComposer.sendBtn.disabled = true;
-    }
-
-    newChatBtn.addEventListener("click", resetToLanding);
-
-    function formatTime() {
-      return new Date().toLocaleTimeString([], { hour: "numeric", minute: "2-digit" });
-    }
-
-    function scrollToBottom() {
-      conversation.scrollTop = conversation.scrollHeight;
-    }
-
-    function renderUserMessage(text) {
-      const el = document.createElement("div");
-      el.className = "msg user";
-      el.innerHTML = `
-        <div class="msg-head">
-          <span class="msg-name">You</span>
-          <span class="msg-time">${formatTime()}</span>
-        </div>
-        <div class="msg-body"></div>
-      `;
-      el.querySelector(".msg-body").textContent = text;
-      conversationInner.appendChild(el);
-      scrollToBottom();
-    }
-
-    function renderValMessage() {
-      const el = document.createElement("div");
-      el.className = "msg val";
-      el.innerHTML = `
-        <div class="msg-head">
-          <span class="msg-name">Val</span>
-          <span class="msg-time">${formatTime()}</span>
-        </div>
-        <div class="msg-body"><span class="typing-indicator"><span></span><span></span><span></span></span></div>
-        <div class="msg-actions">
-          <button class="icon-btn copy-btn">
-            <svg viewBox="0 0 24 24" fill="none"><rect x="8" y="8" width="12" height="12" rx="2" stroke="currentColor" stroke-width="1.6"/><path d="M16 8V6a2 2 0 0 0-2-2H6a2 2 0 0 0-2 2v8a2 2 0 0 0 2 2h2" stroke="currentColor" stroke-width="1.6"/></svg>
-            Copy
-          </button>
-          <button class="icon-btn regen-btn">
-            <svg viewBox="0 0 24 24" fill="none"><path d="M20 12a8 8 0 1 1-2.34-5.66" stroke="currentColor" stroke-width="1.6" stroke-linecap="round"/><path d="M20 4v5h-5" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round"/></svg>
-            Regenerate
-          </button>
-        </div>
-      `;
-      conversationInner.appendChild(el);
-      scrollToBottom();
-      return el;
-    }
-
-    function wireMessageActions(el, getText, regenerateFn) {
-      const copyBtn = el.querySelector(".copy-btn");
-      const regenBtn = el.querySelector(".regen-btn");
-
-      copyBtn.addEventListener("click", async () => {
-        try {
-          await navigator.clipboard.writeText(getText());
-          const label = copyBtn.childNodes[copyBtn.childNodes.length - 1];
-          label.textContent = " Copied";
-          setTimeout(() => { label.textContent = " Copy"; }, 1500);
-        } catch (e) { /* clipboard unavailable */ }
-      });
-
-      regenBtn.addEventListener("click", regenerateFn);
-    }
-
-    async function sendMessage(text) {
-      enterChatMode();
-      renderUserMessage(text);
-      conversationHistory.push({ role: "user", content: text });
-      await streamValResponse();
-    }
-
-    async function streamValResponse() {
-      isStreaming = true;
-      chatComposer.sendBtn.disabled = true;
-      landingComposer.sendBtn.disabled = true;
-
-      const el = renderValMessage();
-      const bodyEl = el.querySelector(".msg-body");
-      let fullText = "";
-
-      const regenerate = async () => {
-        if (isStreaming) return;
-        el.remove();
-        if (conversationHistory.length && conversationHistory[conversationHistory.length - 1].role === "assistant") {
-          conversationHistory.pop();
-        }
-        await streamValResponse();
-      };
-
-      try {
-        const messages = [
-          { role: "system", content: VAL_SYSTEM_PROMPT },
-          ...conversationHistory
-        ];
-
-        if (!CONFIG.API_KEY || CONFIG.API_KEY.startsWith("YOUR_")) {
-          throw new Error("Please set your OpenRouter API key in the CONFIG object.");
-        }
-
-        const response = await fetch(CONFIG.API_URL, {
-          method: "POST",
-          headers: {
-            "Content-Type": "application/json",
-            "Authorization": `Bearer ${CONFIG.API_KEY}`,
-            "HTTP-Referer": window.location.href,
-            "X-Title": "Val"
-          },
-          body: JSON.stringify({
-            model: CONFIG.MODEL,
-            messages,
-            temperature: CONFIG.TEMPERATURE,
-            max_tokens: CONFIG.MAX_TOKENS,
-            stream: true,
-            usage: { include: true }
-          })
-        });
-
-        if (!response.ok) {
-          const errBody = await response.text().catch(() => "");
-          throw new Error(`API error (${response.status}). ${errBody ? errBody.slice(0, 200) : ""}`);
-        }
-
-        bodyEl.innerHTML = `<span class="stream-text"></span><span class="cursor"></span>`;
-        const streamTextEl = bodyEl.querySelector(".stream-text");
-
-        const reader = response.body.getReader();
-        const decoder = new TextDecoder();
-        let buffer = "";
-
-        while (true) {
-          const { done, value } = await reader.read();
-          if (done) break;
-          buffer += decoder.decode(value, { stream: true });
-          const lines = buffer.split("\n");
-          buffer = lines.pop();
-
-          for (const line of lines) {
-            const trimmed = line.trim();
-            if (!trimmed.startsWith("data:")) continue;
-            const payload = trimmed.slice(5).trim();
-            if (payload === "[DONE]") continue;
-            try {
-              const json = JSON.parse(payload);
-              const delta = json.choices?.[0]?.delta?.content;
-              if (delta) {
-                fullText += delta;
-                streamTextEl.textContent = fullText;
-                scrollToBottom();
-              }
-              if (json.usage) {
-                console.debug("Val — token usage:", json.usage);
-              }
-            } catch (e) { /* ignore partial json */ }
-          }
-        }
-
-        bodyEl.innerHTML = "";
-        bodyEl.textContent = fullText || "…";
-        el.classList.add("settled");
-        conversationHistory.push({ role: "assistant", content: fullText });
-        wireMessageActions(el, () => fullText, regenerate);
-
-      } catch (err) {
-        bodyEl.innerHTML = "";
-        const errorDiv = document.createElement("div");
-        errorDiv.className = "error-msg";
-        errorDiv.textContent = err.message || "Something went wrong reaching Val. Please try again.";
-        bodyEl.appendChild(errorDiv);
-        el.classList.add("settled");
-        wireMessageActions(el, () => errorDiv.textContent, regenerate);
-      } finally {
-        isStreaming = false;
-        chatComposer.sendBtn.disabled = chatComposer.textarea.value.trim().length === 0;
-        landingComposer.sendBtn.disabled = landingComposer.textarea.value.trim().length === 0;
-        scrollToBottom();
       }
     }
-  </script>
+  };
+}
+
+/* ---- Provider 2: Groq (via proxy) ---- */
+async function requestGroqStream(modelId, messages){
+  const response = await fetch(`${CONFIG.API_BASE_URL}/api/chat`, {
+    method: "POST",
+    headers: {
+      "Content-Type": "application/json",
+    },
+    body: JSON.stringify({
+      provider: "groq",
+      model: modelId,
+      messages,
+      temperature: CONFIG.TEMPERATURE,
+      max_tokens: CONFIG.MAX_TOKENS
+    })
+  });
+
+  if(!response.ok){
+    const errorData = await response.json().catch(() => ({}));
+    throw new Error(errorData.error || `Groq error (${response.status})`);
+  }
+
+  const reader = response.body.getReader();
+  const decoder = new TextDecoder();
+  let buffer = "";
+
+  return {
+    async *[Symbol.asyncIterator](){
+      while(true){
+        const { done, value } = await reader.read();
+        if(done) break;
+        buffer += decoder.decode(value, { stream: true });
+        const lines = buffer.split("\n");
+        buffer = lines.pop();
+        for(const line of lines){
+          const trimmed = line.trim();
+          if(!trimmed.startsWith("data:")) continue;
+          const payload = trimmed.slice(5).trim();
+          if(payload === "[DONE]") continue;
+          try{
+            const json = JSON.parse(payload);
+            const delta = json.choices?.[0]?.delta?.content;
+            if(delta) yield delta;
+          }catch(e){ /* ignore partial json */ }
+        }
+      }
+    }
+  };
+}
+
+/* ---- Provider 3: Puter.js (client-side, no API key) ---- */
+function withTimeout(promise, ms, message){
+  return Promise.race([
+    promise,
+    new Promise((_, reject) => setTimeout(() => reject(new Error(message)), ms))
+  ]);
+}
+
+async function requestPuterStream(modelId, messages){
+  if(typeof puter === "undefined" || !puter?.ai?.chat){
+    throw new Error("Puter.js didn't load — check your internet connection.");
+  }
+
+  const puterResponse = await withTimeout(
+    puter.ai.chat(messages, {
+      model: modelId,
+      stream: true,
+      temperature: CONFIG.TEMPERATURE,
+      max_tokens: CONFIG.MAX_TOKENS
+    }),
+    CONFIG.PUTER_TIMEOUT_MS,
+    `Puter model "${modelId}" timed out (likely rate-limited).`
+  );
+
+  return {
+    async *[Symbol.asyncIterator](){
+      const it = puterResponse[Symbol.asyncIterator]
+        ? puterResponse[Symbol.asyncIterator]()
+        : (async function*(){ yield { text: String(puterResponse ?? "") }; })()[Symbol.asyncIterator]();
+
+      while(true){
+        const result = await withTimeout(
+          it.next(),
+          CONFIG.PUTER_TIMEOUT_MS,
+          `Puter model "${modelId}" stopped responding (likely rate-limited).`
+        );
+        if(result.done) break;
+        const part = result.value;
+        if(part?.text) yield part.text;
+      }
+    }
+  };
+}
+
+/* ---- Orchestrator: try OpenRouter → Groq → Puter ---- */
+function buildCandidateChain(){
+  const chain = [];
+  (CONFIG.OPENROUTER_MODELS || []).forEach(m => chain.push({ ...m, provider: "openrouter" }));
+  (CONFIG.GROQ_MODELS || []).forEach(m => chain.push({ ...m, provider: "groq" }));
+  (CONFIG.PUTER_MODELS || []).forEach(m => chain.push({ ...m, provider: "puter" }));
+  return chain;
+}
+
+async function streamValResponse(){
+  isStreaming = true;
+  chatComposer.sendBtn.disabled = true;
+  landingComposer.sendBtn.disabled = true;
+
+  const el = renderValMessage();
+  const bodyEl = el.querySelector(".msg-body");
+  const modelBadge = el.querySelector("#msgModel");
+  let fullText = "";
+
+  const regenerate = async () => {
+    if(isStreaming) return;
+    el.remove();
+    if(conversationHistory.length && conversationHistory[conversationHistory.length - 1].role === "assistant"){
+      conversationHistory.pop();
+    }
+    await streamValResponse();
+  };
+
+  try{
+    const messages = [
+      { role: "system", content: VAL_SYSTEM_PROMPT },
+      ...conversationHistory
+    ];
+
+    const candidates = buildCandidateChain();
+    if(candidates.length === 0){
+      throw new Error("Add at least one model to CONFIG to start chatting with Val.");
+    }
+
+    let stream = null;
+    let usedModel = null;
+    let lastError = null;
+
+    for(let i = 0; i < candidates.length; i++){
+      const candidate = candidates[i];
+      const isLast = i === candidates.length - 1;
+      try{
+        stream = candidate.provider === "openrouter"
+          ? await requestOpenRouterStream(candidate.id, messages)
+          : candidate.provider === "groq"
+          ? await requestGroqStream(candidate.id, messages)
+          : await requestPuterStream(candidate.id, messages);
+        usedModel = candidate;
+        break;
+      }catch(err){
+        lastError = err;
+        console.warn(`Val — "${candidate.label}" (${candidate.provider}) unavailable: ${err.message}`, isLast ? "" : "Trying the next model…");
+        if(isLast) throw err;
+      }
+    }
+
+    if(!stream) throw lastError || new Error("All models are currently unavailable. Please try again shortly.");
+
+    if(usedModel && !(usedModel.provider === "openrouter" && usedModel.id === CONFIG.OPENROUTER_MODELS[0]?.id)){
+      modelBadge.textContent = usedModel.provider === "puter"
+        ? `· via ${usedModel.label} (Puter)`
+        : usedModel.provider === "groq"
+        ? `· via ${usedModel.label} (Groq)`
+        : `· via ${usedModel.label}`;
+    }
+
+    bodyEl.innerHTML = `<span class="stream-text"></span><span class="cursor"></span>`;
+    const streamTextEl = bodyEl.querySelector(".stream-text");
+
+    for await (const delta of stream){
+      fullText += delta;
+      streamTextEl.textContent = fullText;
+      scrollToBottom();
+    }
+
+    bodyEl.innerHTML = "";
+    bodyEl.textContent = fullText || "…";
+    el.classList.add("settled");
+    conversationHistory.push({ role: "assistant", content: fullText });
+    wireMessageActions(el, () => fullText, regenerate);
+
+  }catch(err){
+    bodyEl.innerHTML = "";
+    const errorDiv = document.createElement("div");
+    errorDiv.className = "error-msg";
+    errorDiv.textContent = err.message || "Something went wrong reaching Val. Please try again.";
+    bodyEl.appendChild(errorDiv);
+    el.classList.add("settled");
+    wireMessageActions(el, () => errorDiv.textContent, regenerate);
+  }finally{
+    isStreaming = false;
+    chatComposer.sendBtn.disabled = chatComposer.textarea.value.trim().length === 0;
+    landingComposer.sendBtn.disabled = landingComposer.textarea.value.trim().length === 0;
+    scrollToBottom();
+  }
+}
+
+/* ---------- Support FAB ---------- */
+const supportFab = document.getElementById("supportFab");
+const supportTooltip = document.getElementById("supportTooltip");
+const supportLines = [
+  "Keep me alive with a star ✨",
+  "Val runs on vibes and API credits",
+  "Feed the model, save the vibe",
+  "One click = infinite good karma",
+  "Support Val, she's listening (kindly)",
+  "This button does nothing... except help a lot",
+  "Val's therapist bills are due",
+  "Psst — the docs are surprisingly funny"
+];
+let lastLine = -1;
+function pickSupportLine(){
+  let i = Math.floor(Math.random() * supportLines.length);
+  if(i === lastLine) i = (i + 1) % supportLines.length;
+  lastLine = i;
+  supportTooltip.textContent = supportLines[i];
+}
+supportFab.addEventListener("mouseenter", pickSupportLine);
+supportFab.addEventListener("focus", pickSupportLine);
+supportFab.addEventListener("click", () => {
+  supportFab.classList.remove("wiggle");
+  void supportFab.offsetWidth;
+  supportFab.classList.add("wiggle");
+});
+
+/* ---------- What's New modal ---------- */
+const WHATSNEW_VERSION = "groq-fallback-v1";
+const WHATSNEW_STORAGE_KEY = "val-whatsnew-seen";
+
+const whatsNewOverlay = document.getElementById("whatsNewOverlay");
+const whatsNewList = document.getElementById("whatsNewList");
+const whatsNewSubtitle = document.getElementById("whatsNewSubtitle");
+const whatsNewFootnote = document.getElementById("whatsNewFootnote");
+const whatsNewClose = document.getElementById("whatsNewClose");
+const whatsNewGotIt = document.getElementById("whatsNewGotIt");
+const whatsNewBtn = document.getElementById("whatsNewBtn");
+
+function hasSeenWhatsNew(){
+  try{ return localStorage.getItem(WHATSNEW_STORAGE_KEY) === WHATSNEW_VERSION; }
+  catch(e){ return false; }
+}
+function markWhatsNewSeen(){
+  try{ localStorage.setItem(WHATSNEW_STORAGE_KEY, WHATSNEW_VERSION); }catch(e){ /* ignore */ }
+}
+
+function whatsNewGroupHTML(title, models, startNum){
+  if(!models || models.length === 0) return "";
+  const header = `<li class="whatsnew-group-label" style="animation:none;opacity:1;transform:none;">${title}</li>`;
+  const items = models.map((m, i) => `
+    <li style="animation-delay:${0.08 + (startNum + i) * 0.06}s">
+      <span class="wn-num">${startNum + i + 1}</span>
+      <span class="wn-name">${m.label}</span>
+      <span class="wn-tag">Free</span>
+    </li>
+  `).join("");
+  return header + items;
+}
+
+function populateWhatsNew(){
+  const orModels = CONFIG.OPENROUTER_MODELS || [];
+  const groqModels = CONFIG.GROQ_MODELS || [];
+  const puterModels = CONFIG.PUTER_MODELS || [];
+  const total = orModels.length + groqModels.length + puterModels.length;
+
+  whatsNewSubtitle.textContent = `Added ${total} AI models across 3 providers`;
+  whatsNewFootnote.textContent = "New: Val now falls back to Groq before Puter.js. If every OpenRouter model hits its limit, Val quietly tries Groq next — and only switches to Puter.js if Groq is also out, so you'll never lose the thread.";
+
+  whatsNewList.innerHTML =
+    whatsNewGroupHTML("OpenRouter", orModels, 0) +
+    whatsNewGroupHTML("Groq — new fallback", groqModels, orModels.length) +
+    whatsNewGroupHTML("Puter.js — last resort, no key needed", puterModels, orModels.length + groqModels.length);
+}
+
+function openWhatsNew(){
+  populateWhatsNew();
+  whatsNewOverlay.classList.add("visible");
+  whatsNewOverlay.setAttribute("aria-hidden", "false");
+}
+function closeWhatsNew(){
+  whatsNewOverlay.classList.remove("visible");
+  whatsNewOverlay.setAttribute("aria-hidden", "true");
+  markWhatsNewSeen();
+}
+
+whatsNewClose.addEventListener("click", closeWhatsNew);
+whatsNewGotIt.addEventListener("click", closeWhatsNew);
+whatsNewBtn.addEventListener("click", openWhatsNew);
+whatsNewOverlay.addEventListener("click", (e) => {
+  if(e.target === whatsNewOverlay) closeWhatsNew();
+});
+document.addEventListener("keydown", (e) => {
+  if(e.key === "Escape" && whatsNewOverlay.classList.contains("visible")) closeWhatsNew();
+});
+
+/* ---------- Guide: step-by-step onboarding (multi-language) ---------- */
+const GUIDE_STORAGE_KEY = "val-guide-seen";
+const GUIDE_VERSION = "guide-v2";
+
+const guideOverlay = document.getElementById("guideOverlay");
+const guideIcon = document.getElementById("guideIcon");
+const guideTitle = document.getElementById("guideTitle");
+const guideDesc = document.getElementById("guideDesc");
+const guideDots = document.getElementById("guideDots");
+const guideBack = document.getElementById("guideBack");
+const guideNext = document.getElementById("guideNext");
+const guideClose = document.getElementById("guideClose");
+const guideBtn = document.getElementById("guideBtn");
+const landingGuideBtn = document.getElementById("landingGuideBtn");
+
+const ICON_SPARKLE = `<svg viewBox="0 0 24 24" fill="none"><path d="M12 3l1.8 5.2L19 10l-5.2 1.8L12 17l-1.8-5.2L5 10l5.2-1.8L12 3z" stroke="currentColor" stroke-width="1.4" stroke-linejoin="round"/></svg>`;
+const ICON_SEND = `<svg viewBox="0 0 24 24" fill="none"><path d="M4 12L20 4L14 20L11 13L4 12Z" stroke="currentColor" stroke-width="1.6" stroke-linejoin="round" stroke-linecap="round"/></svg>`;
+const ICON_WAVE = `<svg viewBox="0 0 24 24" fill="none"><rect x="5" y="9" width="2.4" height="6" rx="1.2" fill="currentColor"/><rect x="10.8" y="5" width="2.4" height="14" rx="1.2" fill="currentColor"/><rect x="16.6" y="8" width="2.4" height="8" rx="1.2" fill="currentColor"/></svg>`;
+const ICON_REFRESH = `<svg viewBox="0 0 24 24" fill="none"><path d="M20 12a8 8 0 1 1-2.34-5.66" stroke="currentColor" stroke-width="1.6" stroke-linecap="round"/><path d="M20 4v5h-5" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round"/></svg>`;
+const ICON_BATTERY = `<svg viewBox="0 0 24 24" fill="none"><rect x="3" y="8" width="16" height="8" rx="2" stroke="currentColor" stroke-width="1.6"/><path d="M21 10.5v3" stroke="currentColor" stroke-width="1.6" stroke-linecap="round"/></svg>`;
+const ICON_HEART = `<svg viewBox="0 0 24 24" fill="none"><path d="M12 20.5s-7.2-4.4-9.8-9C.6 8.1 1.6 4.8 4.6 3.6c2.3-.9 4.7 0 6 2 .5.8 1.4.8 1.9 0 1.3-2 3.7-2.9 6-2 3 1.2 4 4.5 2.4 7.9-2.6 4.6-9.8 9-9.8 9z" stroke="currentColor" stroke-width="1.5" stroke-linejoin="round"/></svg>`;
+const ICON_CHECK = `<svg viewBox="0 0 24 24" fill="none"><circle cx="12" cy="12" r="8.5" stroke="currentColor" stroke-width="1.5"/><path d="M8.3 12.3l2.6 2.6 4.8-5.4" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round"/></svg>`;
+
+const GUIDE_STEPS = {
+  en: [
+    { icon: ICON_SPARKLE, title: "Welcome to Val", desc: "Val is a warm, casual AI companion — not a corporate assistant. This is a private space for you to talk, vent, brainstorm, or just have a laid-back conversation." },
+    { icon: ICON_SEND, title: "Start chatting", desc: "Type your message in the composer below. Press Enter to send, or Shift + Enter to add a new line before sending." },
+    { icon: ICON_WAVE, title: "Instant replies", desc: "Val types her responses word by word in real-time — just like a real conversation, not a block of text appearing all at once." },
+    { icon: ICON_REFRESH, title: "Copy & Regenerate", desc: "Every Val message has a Copy button to copy the text, and a Regenerate button to ask for a fresh answer. If Val stops mid-response or hits an error, click Regenerate — Val will automatically try other models and providers behind the scenes (OpenRouter → Groq → Puter.js), so your chat rarely gets stuck." },
+    { icon: ICON_BATTERY, title: "Still hitting limits?", desc: "If you've regenerated many times and keep failing on every model, it means all free provider quotas are temporarily exhausted. It's not a bug — try again a little later, it usually recovers by itself." },
+    { icon: ICON_HEART, title: "Support Val's growth", desc: "Val runs on free APIs with usage limits. If you enjoy chatting here, click the ♥ button on the bottom right — it shows you how to support Val so it can keep growing and hit limits less often." },
+    { icon: ICON_CHECK, title: "Ready to chat", desc: "Use New chat to start a fresh conversation anytime, What's new for the latest updates, and this guide is always available from the Guide button at the top left. Let's go!" }
+  ],
+  id: [
+    { icon: ICON_SPARKLE, title: "Selamat datang di Val", desc: "Val adalah teman ngobrol AI yang santai dan hangat — bukan asisten korporat. Ini ruang pribadi buat kamu cerita, curhat, brainstorming, atau sekadar ngobrol santai." },
+    { icon: ICON_SEND, title: "Mulai ngobrol", desc: "Ketik pesanmu di kolom bawah. Tekan Enter untuk kirim, atau Shift + Enter kalau mau baris baru dulu sebelum kirim." },
+    { icon: ICON_WAVE, title: "Balasan langsung", desc: "Val mengetik balasannya secara real-time, kata demi kata — seperti sedang ngobrol beneran, bukan menunggu satu paragraf penuh muncul sekaligus." },
+    { icon: ICON_REFRESH, title: "Copy & Regenerate", desc: "Setiap balasan Val punya tombol Copy buat menyalin teks, dan Regenerate buat minta jawaban baru. Kalau balasan berhenti di tengah atau muncul error, klik Regenerate — Val otomatis coba model & provider lain di belakang layar (OpenRouter → Groq → Puter.js), jadi obrolan jarang benar-benar macet." },
+    { icon: ICON_BATTERY, title: "Masih kena limit terus?", desc: "Kalau sudah regenerate berkali-kali dan tetap gagal terus di semua model, itu tandanya kuota/token dari semua provider gratis sedang habis bersamaan. Bukan bug — coba lagi beberapa saat lagi ya, biasanya pulih sendiri." },
+    { icon: ICON_HEART, title: "Dukung Val berkembang", desc: "Val jalan pakai API gratis yang ada batasnya. Kalau kamu suka ngobrol di sini, klik tombol ♥ di pojok kanan bawah — di situ ada cara mendukung supaya Val bisa terus berkembang dan makin jarang kena limit." },
+    { icon: ICON_CHECK, title: "Siap ngobrol", desc: "Tombol New chat mulai obrolan baru kapan saja, What's new nunjukin update terbaru, dan panduan ini bisa dibuka lagi lewat tombol Guide di pojok kiri atas. Yuk mulai!" }
+  ]
+};
+
+function hasSeenGuide(){
+  try{ return localStorage.getItem(GUIDE_STORAGE_KEY) === GUIDE_VERSION; }
+  catch(e){ return false; }
+}
+function markGuideSeen(){
+  try{ localStorage.setItem(GUIDE_STORAGE_KEY, GUIDE_VERSION); }catch(e){ /* ignore */ }
+}
+
+function renderGuideStep(){
+  const steps = GUIDE_STEPS[guideLanguage] || GUIDE_STEPS.en;
+  const step = steps[guideStep];
+  const isFirst = guideStep === 0;
+  const isLast = guideStep === steps.length - 1;
+
+  guideIcon.innerHTML = step.icon;
+  guideTitle.textContent = step.title;
+  guideDesc.textContent = step.desc;
+
+  guideDots.innerHTML = steps.map((_, i) =>
+    `<span class="${i === guideStep ? "active" : ""}" data-step="${i}"></span>`
+  ).join("");
+  guideDots.querySelectorAll("span").forEach(dot => {
+    dot.addEventListener("click", () => { guideStep = parseInt(dot.dataset.step, 10); renderGuideStep(); });
+  });
+
+  guideBack.disabled = isFirst;
+  guideNext.textContent = isLast ? (guideLanguage === "id" ? "Mulai ngobrol" : "Start chatting") : (guideLanguage === "id" ? "Lanjut" : "Next");
+}
+
+function openGuide(lang){
+  if(lang) guideLanguage = lang;
+  guideStep = 0;
+  renderGuideStep();
+  guideOverlay.classList.add("visible");
+  guideOverlay.setAttribute("aria-hidden", "false");
+}
+function closeGuide(){
+  guideOverlay.classList.remove("visible");
+  guideOverlay.setAttribute("aria-hidden", "true");
+  markGuideSeen();
+}
+
+guideNext.addEventListener("click", () => {
+  const steps = GUIDE_STEPS[guideLanguage] || GUIDE_STEPS.en;
+  if(guideStep === steps.length - 1){
+    closeGuide();
+    return;
+  }
+  guideStep++;
+  renderGuideStep();
+});
+guideBack.addEventListener("click", () => {
+  if(guideStep === 0) return;
+  guideStep--;
+  renderGuideStep();
+});
+guideClose.addEventListener("click", closeGuide);
+guideBtn.addEventListener("click", () => openGuide(guideLanguage));
+landingGuideBtn.addEventListener("click", () => openGuide(guideLanguage));
+guideOverlay.addEventListener("click", (e) => {
+  if(e.target === guideOverlay) closeGuide();
+});
+document.addEventListener("keydown", (e) => {
+  if(guideOverlay.classList.contains("visible")){
+    if(e.key === "Escape") closeGuide();
+    if(e.key === "ArrowRight") guideNext.click();
+    if(e.key === "ArrowLeft" && guideStep > 0) guideBack.click();
+  }
+});
+
+/* ---------- Language selector ---------- */
+const langOverlay = document.getElementById("langOverlay");
+const langEn = document.getElementById("langEn");
+const langId = document.getElementById("langId");
+
+function hasChosenLanguage(){
+  try{ return localStorage.getItem("val-guide-language") !== null; }
+  catch(e){ return false; }
+}
+function setLanguage(lang){
+  guideLanguage = lang;
+  try{ localStorage.setItem("val-guide-language", lang); }catch(e){ /* ignore */ }
+}
+function getStoredLanguage(){
+  try{ return localStorage.getItem("val-guide-language") || "en"; }
+  catch(e){ return "en"; }
+}
+
+function showLanguageSelector(){
+  langOverlay.classList.add("visible");
+  langOverlay.setAttribute("aria-hidden", "false");
+}
+function hideLanguageSelector(){
+  langOverlay.classList.remove("visible");
+  langOverlay.setAttribute("aria-hidden", "true");
+}
+
+langEn.addEventListener("click", () => {
+  setLanguage("en");
+  hideLanguageSelector();
+  if(!hasSeenGuide()){
+    setTimeout(() => openGuide("en"), 400);
+  }else if(!hasSeenWhatsNew()){
+    setTimeout(openWhatsNew, 400);
+  }
+});
+
+langId.addEventListener("click", () => {
+  setLanguage("id");
+  hideLanguageSelector();
+  if(!hasSeenGuide()){
+    setTimeout(() => openGuide("id"), 400);
+  }else if(!hasSeenWhatsNew()){
+    setTimeout(openWhatsNew, 400);
+  }
+});
+
+// On first visit: show language selector first
+// On returning visit: use stored language, skip selector
+if(!hasChosenLanguage()){
+  setTimeout(showLanguageSelector, 600);
+}else{
+  guideLanguage = getStoredLanguage();
+  if(!hasSeenGuide()){
+    setTimeout(() => openGuide(guideLanguage), 900);
+  }else if(!hasSeenWhatsNew()){
+    setTimeout(openWhatsNew, 900);
+  }
+}
+</script>
 </body>
 </html>
